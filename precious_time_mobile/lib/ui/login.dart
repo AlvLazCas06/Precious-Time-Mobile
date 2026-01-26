@@ -62,7 +62,7 @@ class _LoginState extends State<Login> {
                     borderRadius: BorderRadius.circular(24),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
+                        color: Colors.black,
                         blurRadius: 20,
                         offset: const Offset(0, 4),
                       ),
@@ -177,13 +177,10 @@ class _LoginState extends State<Login> {
                         ),
                       ),
                       const SizedBox(height: 12),
-
-                      // Enlace ¿Olvidaste tu contraseña?
                       Align(
                         alignment: Alignment.centerRight,
                         child: TextButton(
                           onPressed: () {
-                            // TODO: Implementar recuperación de contraseña
                           },
                           style: TextButton.styleFrom(
                             padding: EdgeInsets.zero,
@@ -200,14 +197,11 @@ class _LoginState extends State<Login> {
                         ),
                       ),
                       const SizedBox(height: 24),
-
-                      // Botón Iniciar sesión
                       SizedBox(
                         width: double.infinity,
                         height: 52,
                         child: ElevatedButton(
                           onPressed: () {
-                            // TODO: Implementar lógica de inicio de sesión
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF2B7CFF),
@@ -244,7 +238,6 @@ class _LoginState extends State<Login> {
                     ),
                     TextButton(
                       onPressed: () {
-                        // TODO: Navegar a pantalla de registro
                       },
                       style: TextButton.styleFrom(
                         padding: const EdgeInsets.only(left: 4),

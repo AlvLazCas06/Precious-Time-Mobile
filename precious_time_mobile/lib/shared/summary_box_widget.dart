@@ -1,0 +1,58 @@
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+class SummaryBoxWidget extends StatelessWidget {
+  const SummaryBoxWidget({
+    super.key,
+    required this.icon,
+    required this.iconColor,
+    required this.label,
+    required this.totalTasks,
+    required this.totalProjects
+  });
+
+  final IconData icon;
+  final Color iconColor;
+  final String label;
+  final double totalTasks;
+  final double totalProjects;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 175,
+      height: 125,
+      padding: EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Icon(icon, color: iconColor,),
+              Text(label, style: GoogleFonts.poppins(fontWeight: FontWeight.bold),)
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Tareas:', style: GoogleFonts.poppins()),
+              Text(totalTasks.toString(), style: GoogleFonts.poppins(fontWeight: FontWeight.bold),)
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Proyectos:', style: GoogleFonts.poppins()),
+              Text(totalProjects.toString(), style: GoogleFonts.poppins(fontWeight: FontWeight.bold))
+            ],
+          )
+        ],
+      ),
+    );
+  }
+}
