@@ -14,8 +14,8 @@ class SummaryBoxWidget extends StatelessWidget {
   final IconData icon;
   final Color iconColor;
   final String label;
-  final double totalTasks;
-  final double totalProjects;
+  final int totalTasks;
+  final int totalProjects;
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +26,14 @@ class SummaryBoxWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey,
+            spreadRadius: 1,
+            blurRadius: 8,
+            offset: Offset(0, 3),
+          ),
+        ],
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -41,14 +49,14 @@ class SummaryBoxWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text('Tareas:', style: GoogleFonts.poppins()),
-              Text(totalTasks.toString(), style: GoogleFonts.poppins(fontWeight: FontWeight.bold),)
+              Text(totalTasks.toString(), style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 17),)
             ],
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text('Proyectos:', style: GoogleFonts.poppins()),
-              Text(totalProjects.toString(), style: GoogleFonts.poppins(fontWeight: FontWeight.bold))
+              Text(totalProjects.toString(), style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 17))
             ],
           )
         ],
