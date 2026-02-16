@@ -202,6 +202,7 @@ class _LoginState extends State<Login> {
                         height: 52,
                         child: ElevatedButton(
                           onPressed: () {
+                            Navigator.pushNamed(context, '/home');
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF2B7CFF),

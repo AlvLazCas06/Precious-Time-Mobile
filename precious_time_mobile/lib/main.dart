@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:precious_time_mobile/ui/home_page_view.dart';
+import 'package:precious_time_mobile/features/home/ui/home_page_view.dart';
+import 'package:precious_time_mobile/features/login/ui/login.dart';
 //import 'package:precious_time_mobile/ui/login.dart';
 
 void main() {
@@ -17,7 +18,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: .fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: HomePageView(),
+      initialRoute: '/',
+      routes: {
+        '/' : (context) => Login(),
+        '/home': (context) => HomePageView()
+      }
     );
   }
 }
