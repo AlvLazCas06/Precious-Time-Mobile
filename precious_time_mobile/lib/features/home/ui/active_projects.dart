@@ -6,7 +6,7 @@ class ActiveProjects extends StatelessWidget {
     super.key,
     required this.color,
     required this.label,
-    required this.percent
+    required this.percent,
   });
   final Color color;
   final String label;
@@ -24,10 +24,10 @@ class ActiveProjects extends StatelessWidget {
           BoxShadow(
             color: Colors.grey,
             spreadRadius: 1,
-            blurRadius: 8,
-            offset: Offset(0, 3),
+            blurRadius: 4,
+            offset: Offset(0, 0),
           ),
-        ]
+        ],
       ),
       child: Padding(
         padding: const EdgeInsets.all(12.0),
@@ -36,11 +36,34 @@ class ActiveProjects extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Icon(Icons.folder_copy_outlined, color: color,),
-                Text(label, style: GoogleFonts.poppins(fontWeight: FontWeight.w500, fontSize: 17),),
-                Text('$percent%', style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 16))
+                Icon(Icons.folder_copy_outlined, color: color),
+                Text(
+                  label,
+                  style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 17,
+                  ),
+                ),
+                Text(
+                  '$percent%',
+                  style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
               ],
-            )
+            ),
+            SizedBox(height: 7.5),
+            SizedBox(
+              width: 400,
+              child: LinearProgressIndicator(
+                value: percent / 100,
+                backgroundColor: Colors.grey[300],
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                minHeight: 12,
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
           ],
         ),
       ),

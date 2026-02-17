@@ -30,8 +30,8 @@ class SummaryBoxWidget extends StatelessWidget {
           BoxShadow(
             color: Colors.grey,
             spreadRadius: 1,
-            blurRadius: 8,
-            offset: Offset(0, 3),
+            blurRadius: 4,
+            offset: Offset(0, 0),
           ),
         ],
       ),

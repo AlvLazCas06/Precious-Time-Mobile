@@ -24,6 +24,14 @@ class ProjectCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey,
+            spreadRadius: 1,
+            blurRadius: 4,
+            offset: Offset(0, 0),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -112,13 +120,19 @@ class ProjectCard extends StatelessWidget {
               Row(
                 children: [
                   Icon(Icons.calendar_month, size: 18),
-                  Text('Inicio: $startDate', style: GoogleFonts.poppins(fontSize: 16)),
+                  Text(
+                    'Inicio: $startDate',
+                    style: GoogleFonts.poppins(fontSize: 16),
+                  ),
                 ],
               ),
               Row(
                 children: [
                   Icon(Icons.calendar_month, size: 18),
-                  Text('Fin: $finishDate', style: GoogleFonts.poppins(fontSize: 16)),
+                  Text(
+                    'Fin: $finishDate',
+                    style: GoogleFonts.poppins(fontSize: 16),
+                  ),
                 ],
               ),
             ],
