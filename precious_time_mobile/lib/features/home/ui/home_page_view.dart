@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:flutter_switch/flutter_switch.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:precious_time_mobile/features/home/ui/active_projects.dart';
 import 'package:precious_time_mobile/features/home/ui/app_bar_precious_time.dart';
@@ -17,6 +18,7 @@ class HomePageView extends StatefulWidget {
 
 class _HomePageViewState extends State<HomePageView> {
   int currentPageIndex = 0;
+  bool theme = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -530,19 +532,124 @@ class _HomePageViewState extends State<HomePageView> {
                 ),
                 SizedBox(height: 30),
                 Container(
+                  height: 90,
                   decoration: BoxDecoration(
-                    color: Colors.white
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey,
+                        spreadRadius: 1,
+                        blurRadius: 4,
+                        offset: Offset(0, 0),
+                      ),
+                    ],
                   ),
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Icon(Icons.wb_sunny_outlined, color: Color.fromARGB(255, 255, 105, 0),),
+                      Icon(
+                        Icons.wb_sunny_outlined,
+                        color: Color.fromARGB(255, 255, 105, 0),
+                      ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text('Tema de la apicación', style: GoogleFonts.poppins(fontWeight: FontWeight.w500, fontSize: 18),),
-                          Text('Modo claro', style: GoogleFonts.poppins(fontSize: 16),)
+                          Text(
+                            'Tema de la apicación',
+                            style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 18,
+                            ),
+                          ),
+                          Text(
+                            'Modo claro',
+                            style: GoogleFonts.poppins(fontSize: 16),
+                          ),
                         ],
-                      )
+                      ),
+                      FlutterSwitch(
+                        value: theme,
+                        width: 60,
+                        activeColor: Color.fromARGB(255, 21, 93, 252),
+                        inactiveColor: Color.fromARGB(255, 209, 213, 220),
+                        onToggle: (val) {
+                          setState(() {
+                            theme = !theme;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 30),
+                Container(
+                  padding: EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey,
+                        spreadRadius: 1,
+                        blurRadius: 4,
+                        offset: Offset(0, 0),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.notifications_outlined,
+                            color: Color.fromARGB(255, 173, 70, 255),
+                            size: 28,
+                          ),
+                          SizedBox(width: 10),
+                          Text(
+                            'Canal de notificaciones',
+                            style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 20),
+                      DropdownButtonFormField<String>(
+                        value: 'In APP',
+                        decoration: InputDecoration(
+                          labelText: 'Selecciona una opción',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                        ),
+                        items: <String>['In APP', 'Email']
+                            .map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            })
+                            .toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            //selectedValue = newValue;
+                          });
+                        },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Por favor selecciona una opción';
+                          }
+                          return null;
+                        },
+                      ),
                     ],
                   ),
                 ),
