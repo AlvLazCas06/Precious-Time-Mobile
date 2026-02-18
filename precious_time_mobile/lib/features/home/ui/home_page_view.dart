@@ -336,8 +336,11 @@ class _HomePageViewState extends State<HomePageView> {
         Stack(
           children: [
             SingleChildScrollView(
-              child: Padding(
+              child: Container(
                 padding: const EdgeInsets.all(18),
+                decoration: BoxDecoration(
+                  color: Color.fromARGB(255, 249, 250, 251),
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -407,8 +410,11 @@ class _HomePageViewState extends State<HomePageView> {
           ],
         ),
         SingleChildScrollView(
-          child: Padding(
+          child: Container(
             padding: const EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: Color.fromARGB(255, 249, 250, 251),
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -462,7 +468,10 @@ class _HomePageViewState extends State<HomePageView> {
                       SizedBox(height: 20),
                       Row(
                         children: [
-                          Icon(Icons.person_outline, color: Color.fromARGB(255, 106, 114, 130)),
+                          Icon(
+                            Icons.person_outline,
+                            color: Color.fromARGB(255, 106, 114, 130),
+                          ),
                           SizedBox(width: 10),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -485,7 +494,10 @@ class _HomePageViewState extends State<HomePageView> {
                       SizedBox(height: 20),
                       Row(
                         children: [
-                          Icon(Icons.mail_outline, color: Color.fromARGB(255, 106, 114, 130)),
+                          Icon(
+                            Icons.mail_outline,
+                            color: Color.fromARGB(255, 106, 114, 130),
+                          ),
                           SizedBox(width: 10),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -506,6 +518,59 @@ class _HomePageViewState extends State<HomePageView> {
                         ],
                       ),
                     ],
+                  ),
+                ),
+                SizedBox(height: 30),
+                Text(
+                  'Configuración de la aplicación',
+                  style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 20,
+                  ),
+                ),
+                SizedBox(height: 30),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.wb_sunny_outlined, color: Color.fromARGB(255, 255, 105, 0),),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Tema de la apicación', style: GoogleFonts.poppins(fontWeight: FontWeight.w500, fontSize: 18),),
+                          Text('Modo claro', style: GoogleFonts.poppins(fontSize: 16),)
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+                SizedBox(height: 30),
+                SizedBox(
+                  width: double.infinity,
+                  child: FloatingActionButton(
+                    onPressed: () {},
+                    backgroundColor: Color.fromARGB(255, 251, 44, 54),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.logout_outlined,
+                          color: Colors.white,
+                          size: 26,
+                        ),
+                        SizedBox(width: 10),
+                        Text(
+                          'Cerrar sesión',
+                          style: GoogleFonts.poppins(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
