@@ -97,7 +97,11 @@ class _ProjectListPageState extends State<ProjectListPage> {
                   ],
                 ),
                 child: IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    setState(() {
+                      Navigator.pushNamed(context, '/project/create');
+                    });
+                  },
                   icon: Icon(Icons.add, color: Colors.white),
                   style: IconButton.styleFrom(
                     backgroundColor: Color.fromARGB(255, 21, 93, 255),
