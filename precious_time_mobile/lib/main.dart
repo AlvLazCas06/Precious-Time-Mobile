@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:precious_time_mobile/features/create_task/ui/create_task_page.dart';
 import 'package:precious_time_mobile/features/home/ui/home_page_view.dart';
 import 'package:precious_time_mobile/features/login/ui/login.dart';
 //import 'package:precious_time_mobile/ui/login.dart';
@@ -21,7 +22,8 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/' : (context) => Login(),
-        '/home': (context) => HomePageView()
+        '/home': (context) => HomePageView(),
+        '/task/create': (context) => CreateTaskPage()
       }
     );
   }
