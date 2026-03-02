@@ -9,14 +9,15 @@ class PreferenceService implements PreferenceInterface {
   final String _endpoint = '/api/v1/preferences';
 
   @override
-  Future<PreferenceResponse> getPreference() async {
+  Future<PreferenceResponse?> getPreference() async {
     try {
       var response = await _apiClient.get(_endpoint);
-      var preference;
+      
       if (response.statusCode >= 200 && response.statusCode < 300) {
-        preference = PreferenceResponse.fromJson(response.headers);
+        var preference = PreferenceResponse.fromJson(response.headers);
+        return preference;
       }
-      return preference;
+      return null;
     } catch (e) {
       throw Exception(e.toString());
     }

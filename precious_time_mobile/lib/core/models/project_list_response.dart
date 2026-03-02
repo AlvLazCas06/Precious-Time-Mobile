@@ -10,7 +10,7 @@ class ProjectListResponse {
   factory ProjectListResponse.fromJson(Map<String, dynamic> json) {
     return ProjectListResponse(
       content: (json['content'] as List<dynamic>)
-          .map((item) => Project.fromJson(item as Map<String, dynamic>))
+          .map((e) => Project.fromJson(e as Map<String, dynamic>))
           .toList(),
       page: Page.fromJson(json['page'] as Map<String, dynamic>),
     );
@@ -18,7 +18,7 @@ class ProjectListResponse {
 
   Map<String, dynamic> toJson() {
     return {
-      'content': content.map((item) => item.toJson()).toList(),
+      'content': content.map((e) => e.toJson()).toList(),
       'page': page.toJson(),
     };
   }
@@ -27,22 +27,37 @@ class ProjectListResponse {
 class Project {
   final int id;
   final String name;
-  final String emoji;
-  final String color;
+  final String description;
+  final String? startDate;
+  final String? finishDate;
+  final String status;
+  final double progress;
+  final String author;
+  final List<dynamic> tasks;
 
   Project({
     required this.id,
     required this.name,
-    required this.emoji,
-    required this.color,
+    required this.description,
+    this.startDate,
+    this.finishDate,
+    required this.status,
+    required this.progress,
+    required this.author,
+    required this.tasks,
   });
 
   factory Project.fromJson(Map<String, dynamic> json) {
     return Project(
       id: json['id'] as int,
       name: json['name'] as String,
-      emoji: json['emoji'] as String,
-      color: json['color'] as String,
+      description: json['description'] as String,
+      startDate: json['startDate'] as String?,
+      finishDate: json['finishDate'] as String?,
+      status: json['status'] as String,
+      progress: (json['progress'] as num).toDouble(),
+      author: json['author'] as String,
+      tasks: json['tasks'] as List<dynamic>,
     );
   }
 
@@ -50,8 +65,13 @@ class Project {
     return {
       'id': id,
       'name': name,
-      'emoji': emoji,
-      'color': color,
+      'description': description,
+      'startDate': startDate,
+      'finishDate': finishDate,
+      'status': status,
+      'progress': progress,
+      'author': author,
+      'tasks': tasks,
     };
   }
 }
@@ -84,38 +104,6 @@ class Page {
       'number': number,
       'totalElements': totalElements,
       'totalPages': totalPages,
-    };
-  }
-}
-
-class Task {
-  final int id;
-  final String title;
-  final String categoryName;
-  final String priority;
-
-  Task({
-    required this.id,
-    required this.title,
-    required this.categoryName,
-    required this.priority,
-  });
-
-  factory Task.fromJson(Map<String, dynamic> json) {
-    return Task(
-      id: json['id'] as int,
-      title: json['title'] as String,
-      categoryName: json['categoryName'] as String,
-      priority: json['priority'] as String,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'title': title,
-      'categoryName': categoryName,
-      'priority': priority,
     };
   }
 }

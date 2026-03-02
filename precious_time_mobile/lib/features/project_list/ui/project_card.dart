@@ -14,8 +14,8 @@ class ProjectCard extends StatelessWidget {
   final String label;
   final String description;
   final double percent;
-  final String startDate;
-  final String finishDate;
+  final String? startDate;
+  final String? finishDate;
 
   @override
   Widget build(BuildContext context) {
@@ -130,7 +130,7 @@ class ProjectCard extends StatelessWidget {
                 children: [
                   Icon(Icons.calendar_month, size: 18),
                   Text(
-                    'Fin: $finishDate',
+                    finishDate == null ? 'Sin terminar' : 'Fin: $finishDate',
                     style: GoogleFonts.poppins(fontSize: 16),
                   ),
                 ],

@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:precious_time_mobile/core/service/project_service.dart';
+import 'package:precious_time_mobile/core/service/task_service.dart';
+import 'package:precious_time_mobile/core/service/user_service.dart';
+import 'package:precious_time_mobile/features/home/bloc/project_bloc/project_home_bloc.dart';
+import 'package:precious_time_mobile/features/home/bloc/task_bloc/task_home_bloc.dart';
+import 'package:precious_time_mobile/features/home/bloc/user_bloc/user_home_bloc.dart';
 import 'package:precious_time_mobile/features/home/ui/active_projects.dart';
 import 'package:precious_time_mobile/features/home/ui/app_bar_precious_time.dart';
 import 'package:precious_time_mobile/features/home/ui/card_task_home.dart';
@@ -18,6 +25,9 @@ class HomePageView extends StatefulWidget {
 
 class _HomePageViewState extends State<HomePageView> {
   int currentPageIndex = 0;
+  late UserHomeBloc userHomeBloc;
+  late TaskHomeBloc taskHomeBloc;
+  late ProjectHomeBloc projectHomeBloc;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,159 +92,219 @@ class _HomePageViewState extends State<HomePageView> {
         ],
       ),
       body: [
-        SingleChildScrollView(
-          child: Container(
-            padding: EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Color.fromARGB(255, 249, 250, 251),
+        MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (context) =>
+                  userHomeBloc = UserHomeBloc(UserService())
+                    ..add(UserHomeFetchEvent()),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Hola, María 👋',
-                      style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 30,
-                      ),
-                    ),
-                    Text(
-                      'Aquí está tu resumen de hoy',
-                      style: GoogleFonts.poppins(),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 20),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Resumen de hoy',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        SummaryBoxWidget(
-                          icon: Icons.timer_outlined,
-                          iconColor: Color.fromARGB(255, 43, 127, 255),
-                          label: 'Pendientes',
-                          totalTasks: 5,
-                          totalProjects: 2,
-                        ),
-                        SummaryBoxWidget(
-                          icon: Icons.error_outline,
-                          iconColor: Color.fromARGB(255, 255, 105, 0),
-                          label: 'En progreso',
-                          totalTasks: 5,
-                          totalProjects: 2,
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        SummaryBoxWidget(
-                          icon: Icons.check_circle_outline,
-                          iconColor: Color.fromARGB(255, 0, 201, 80),
-                          label: 'Completados',
-                          totalTasks: 5,
-                          totalProjects: 2,
-                        ),
-                        SummaryBoxWidget(
-                          icon: Icons.moving,
-                          iconColor: Color.fromARGB(255, 173, 70, 255),
-                          label: 'Total hoy',
-                          totalTasks: 5,
-                          totalProjects: 2,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                SizedBox(height: 20),
-                Column(
-                  //mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Proyectos activos',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                        Text(
-                          'Ver todos',
-                          style: GoogleFonts.poppins(
-                            color: Color.fromARGB(255, 21, 93, 255),
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 10),
-                    ActiveProjects(
-                      color: Color.fromARGB(255, 139, 92, 246),
-                      label: 'Rediseño de la aplicación\nmóvil',
-                      percent: 65,
-                    ),
-                    SizedBox(height: 14),
-                    ActiveProjects(
-                      color: Color.fromARGB(255, 59, 130, 246),
-                      label: 'Rediseño de la aplicación\nmóvil',
-                      percent: 65,
-                    ),
-                    SizedBox(height: 14),
-                    ActiveProjects(
-                      color: Color.fromARGB(255, 16, 185, 129),
-                      label: 'Rediseño de la aplicación\nmóvil',
-                      percent: 65,
-                    ),
-                  ],
-                ),
-                SizedBox(height: 20),
-                Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Tareas pendientes',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                        Text(
-                          'Ver todos',
-                          style: GoogleFonts.poppins(
-                            color: Color.fromARGB(255, 21, 93, 255),
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    ),
-                    CardTaskHome(
-                      label: 'Revisar propuesta de diseño',
-                      type: 'diseño',
-                      color: Color.fromARGB(255, 139, 92, 246),
-                    ),
-                  ],
-                ),
-              ],
+            BlocProvider(
+              create: (context) =>
+                  taskHomeBloc = TaskHomeBloc(TaskService())
+                    ..add(TaskHomeFetchEvent()),
             ),
+            BlocProvider(
+              create: (context) =>
+                  projectHomeBloc = ProjectHomeBloc(ProjectService())
+                    ..add(ProjectHomeFetchEvent()),
+            ),
+          ],
+          child: Builder(
+            builder: (context) {
+              return SingleChildScrollView(
+                child: Container(
+                  padding: EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Color.fromARGB(255, 249, 250, 251),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          BlocBuilder(
+                            bloc: BlocProvider.of<UserHomeBloc>(context),
+                            builder: (context, state) {
+                              if (state is UserHomeLoading) {
+                                return Text(
+                                  'Hola, 👋',
+                                  style: GoogleFonts.poppins(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 30,
+                                  ),
+                                );
+                              }
+                              if (state is UserHomeSuccess) {
+                                return Text(
+                                  'Hola, ${state.user.fullName} 👋',
+                                  style: GoogleFonts.poppins(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 30,
+                                  ),
+                                );
+                              }
+                              return Text(
+                                'Hola, María 👋',
+                                style: GoogleFonts.poppins(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 30,
+                                ),
+                              );
+                            },
+                          ),
+                          Text(
+                            'Aquí está tu resumen de hoy',
+                            style: GoogleFonts.poppins(),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 20),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Resumen de hoy',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                          SizedBox(height: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              SummaryBoxWidget(
+                                icon: Icons.timer_outlined,
+                                iconColor: Color.fromARGB(255, 43, 127, 255),
+                                label: 'Pendientes',
+                                totalTasks: 5,
+                                totalProjects: 2,
+                              ),
+                              SummaryBoxWidget(
+                                icon: Icons.error_outline,
+                                iconColor: Color.fromARGB(255, 255, 105, 0),
+                                label: 'En progreso',
+                                totalTasks: 5,
+                                totalProjects: 2,
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              SummaryBoxWidget(
+                                icon: Icons.check_circle_outline,
+                                iconColor: Color.fromARGB(255, 0, 201, 80),
+                                label: 'Completados',
+                                totalTasks: 5,
+                                totalProjects: 2,
+                              ),
+                              SummaryBoxWidget(
+                                icon: Icons.moving,
+                                iconColor: Color.fromARGB(255, 173, 70, 255),
+                                label: 'Total hoy',
+                                totalTasks: 5,
+                                totalProjects: 2,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 20),
+                      Column(
+                        //mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Proyectos activos',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  setState(() {
+                                    currentPageIndex = 1;
+                                  });
+                                },
+                                child: Text(
+                                  'Ver todos',
+                                  style: GoogleFonts.poppins(
+                                    color: Color.fromARGB(255, 21, 93, 255),
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 10),
+                          ActiveProjects(
+                            color: Color.fromARGB(255, 139, 92, 246),
+                            label: 'Rediseño de la aplicación\nmóvil',
+                            percent: 65,
+                          ),
+                          SizedBox(height: 14),
+                          ActiveProjects(
+                            color: Color.fromARGB(255, 59, 130, 246),
+                            label: 'Rediseño de la aplicación\nmóvil',
+                            percent: 65,
+                          ),
+                          SizedBox(height: 14),
+                          ActiveProjects(
+                            color: Color.fromARGB(255, 16, 185, 129),
+                            label: 'Rediseño de la aplicación\nmóvil',
+                            percent: 65,
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 20),
+                      Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Tareas pendientes',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  setState(() {
+                                    currentPageIndex = 2;
+                                  });
+                                },
+                                child: Text(
+                                  'Ver todos',
+                                  style: GoogleFonts.poppins(
+                                    color: Color.fromARGB(255, 21, 93, 255),
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          CardTaskHome(
+                            label: 'Revisar propuesta de diseño',
+                            type: 'diseño',
+                            color: Color.fromARGB(255, 139, 92, 246),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
           ),
         ),
         ProjectListPage(),

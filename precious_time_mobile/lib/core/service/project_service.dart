@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:precious_time_mobile/core/interface/project_interface.dart';
 import 'package:precious_time_mobile/core/models/project_list_response.dart';
 import 'package:precious_time_mobile/core/service/api_client.dart';
@@ -12,7 +14,9 @@ class ProjectService implements ProjectInterface {
     try {
       var response = await _apiClient.get(_endpoint);
       if (response.statusCode >= 200 && response.statusCode < 300) {
-        var projects = ProjectListResponse.fromJson(response.headers).content;
+        var projects = ProjectListResponse.fromJson(
+          jsonDecode(response.body),
+        ).content;
         return projects;
       }
       return [];

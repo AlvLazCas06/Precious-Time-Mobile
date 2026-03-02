@@ -7,14 +7,14 @@ class SummaryBoxWidget extends StatelessWidget {
     required this.icon,
     required this.iconColor,
     required this.label,
-    required this.totalTasks,
+    this.totalTasks,
     required this.totalProjects
   });
 
   final IconData icon;
   final Color iconColor;
   final String label;
-  final int totalTasks;
+  final int? totalTasks;
   final int totalProjects;
 
   @override
