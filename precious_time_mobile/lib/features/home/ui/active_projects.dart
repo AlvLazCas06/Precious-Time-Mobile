@@ -32,9 +32,10 @@ class ActiveProjects extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Column(
+          mainAxisAlignment: .spaceEvenly,
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Icon(Icons.folder_copy_outlined, color: color),
                 Text(

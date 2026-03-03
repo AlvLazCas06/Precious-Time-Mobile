@@ -11,7 +11,7 @@ final class ProjectHomeSuccess extends ProjectHomeState {
   ProjectHomeSuccess({
     required this.projects
   });
-  final List<Project> projects;
+  final List<ProjectSummary> projects;
 }
 
 final class ProjectHomeError extends ProjectHomeState {

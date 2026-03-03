@@ -245,22 +245,51 @@ class _HomePageViewState extends State<HomePageView> {
                             ],
                           ),
                           SizedBox(height: 10),
-                          ActiveProjects(
-                            color: Color.fromARGB(255, 139, 92, 246),
-                            label: 'Rediseño de la aplicación\nmóvil',
-                            percent: 65,
-                          ),
-                          SizedBox(height: 14),
-                          ActiveProjects(
-                            color: Color.fromARGB(255, 59, 130, 246),
-                            label: 'Rediseño de la aplicación\nmóvil',
-                            percent: 65,
-                          ),
-                          SizedBox(height: 14),
-                          ActiveProjects(
-                            color: Color.fromARGB(255, 16, 185, 129),
-                            label: 'Rediseño de la aplicación\nmóvil',
-                            percent: 65,
+                          BlocBuilder(
+                            bloc: BlocProvider.of<ProjectHomeBloc>(context),
+                            builder: (context, state) {
+                              if (state is ProjectHomeLoading) {
+                                return Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+                              if (state is ProjectHomeSuccess) {
+                                if (state.projects.isEmpty) {
+                                  return Center(
+                                    child: Text(
+                                      'No tienes proyectos activos actualmente',
+                                      style: GoogleFonts.poppins(fontSize: 16),
+                                    ),
+                                  );
+                                } else {
+                                  return ListView.builder(
+                                    shrinkWrap: true,
+                                    itemCount: state.projects.length,
+                                    itemBuilder: (context, index) {
+                                      return Column(
+                                        children: [
+                                          ActiveProjects(
+                                            color: Color.fromARGB(
+                                              255,
+                                              139,
+                                              92,
+                                              246,
+                                            ),
+                                            label: state.projects[index].name,
+                                            percent: state
+                                                .projects[index]
+                                                .percent
+                                                .floor(),
+                                          ),
+                                          SizedBox(height: 14),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                }
+                              }
+                              return Center(child: CircularProgressIndicator());
+                            },
                           ),
                         ],
                       ),
@@ -293,10 +322,46 @@ class _HomePageViewState extends State<HomePageView> {
                               ),
                             ],
                           ),
-                          CardTaskHome(
-                            label: 'Revisar propuesta de diseño',
-                            type: 'diseño',
-                            color: Color.fromARGB(255, 139, 92, 246),
+                          BlocBuilder(
+                            bloc: BlocProvider.of<TaskHomeBloc>(context),
+                            builder: (context, state) {
+                              if (state is TaskHomeLoading) {
+                                return Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+                              if (state is TaskHomeSuccess) {
+                                return ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: state.tasks.length,
+                                  itemBuilder: (context, index) {
+                                    return Column(
+                                      children: [
+                                        CardTaskHome(
+                                          label: state.tasks[index].title,
+                                          priority: state.tasks[index].priority,
+                                          date: state.tasks[index].completedAt!,
+                                          emoji:
+                                              state.tasks[index].category.emoji,
+                                          category:
+                                              state.tasks[index].category.name,
+                                          color: Colors.black,
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              }
+                              if (state is TaskHomeError) {
+                                return Center(
+                                  child: Text(
+                                    state.message,
+                                    style: GoogleFonts.poppins(color: Colors.red),
+                                  ),
+                                );
+                              }
+                              return Center(child: CircularProgressIndicator());
+                            },
                           ),
                         ],
                       ),

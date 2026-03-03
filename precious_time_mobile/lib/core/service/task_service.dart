@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:precious_time_mobile/core/interface/task_interface.dart';
 import 'package:precious_time_mobile/core/models/task_list_response.dart';
+import 'package:precious_time_mobile/core/models/task_summary_list_response.dart';
 import 'package:precious_time_mobile/core/service/api_client.dart';
 import 'package:precious_time_mobile/core/service/token_manager.dart';
 
@@ -13,6 +16,22 @@ class TaskService implements TaskInterface {
       var response = await _apiClient.get(_endpoint);
       if (response.statusCode >= 200 && response.statusCode < 300) {
         var tasks = TaskListResponse.fromJson(response.headers).content;
+        return tasks;
+      }
+      return [];
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  @override
+  Future<List<TaskSummary>> getSummaryTasks() async {
+    try {
+      var response = await _apiClient.get('$_endpoint/summary');
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        var tasks = TaskSummaryListResponse.fromJson(
+          jsonDecode(response.body),
+        ).content;
         return tasks;
       }
       return [];
