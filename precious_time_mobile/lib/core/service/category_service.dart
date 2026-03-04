@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:precious_time_mobile/core/interface/category_interface.dart';
 import 'package:precious_time_mobile/core/models/category_list.dart';
 import 'package:precious_time_mobile/core/service/api_client.dart';
@@ -13,7 +15,7 @@ class CategoryService implements CategoryInterface {
       var response = await _apiClient.get(endpoint);
       if (response.statusCode >= 200 || response.statusCode < 300) {
         var categories = CategoryListResponse.fromJson(
-          response.headers,
+          jsonDecode(response.body)
         ).content;
         return categories;
       }

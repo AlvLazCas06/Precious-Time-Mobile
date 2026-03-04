@@ -181,13 +181,11 @@ class _HomePageViewState extends State<HomePageView> {
                                 iconColor: Color.fromARGB(255, 43, 127, 255),
                                 label: 'Pendientes',
                                 totalTasks: 5,
-                                totalProjects: 2,
                               ),
                               SummaryBoxWidget(
                                 icon: Icons.error_outline,
                                 iconColor: Color.fromARGB(255, 255, 105, 0),
                                 label: 'En progreso',
-                                totalTasks: 5,
                                 totalProjects: 2,
                               ),
                             ],
@@ -264,6 +262,7 @@ class _HomePageViewState extends State<HomePageView> {
                                 } else {
                                   return ListView.builder(
                                     shrinkWrap: true,
+                                    physics: NeverScrollableScrollPhysics(),
                                     itemCount: state.projects.length,
                                     itemBuilder: (context, index) {
                                       return Column(
@@ -331,32 +330,53 @@ class _HomePageViewState extends State<HomePageView> {
                                 );
                               }
                               if (state is TaskHomeSuccess) {
-                                return ListView.builder(
-                                  shrinkWrap: true,
-                                  itemCount: state.tasks.length,
-                                  itemBuilder: (context, index) {
-                                    return Column(
-                                      children: [
-                                        CardTaskHome(
-                                          label: state.tasks[index].title,
-                                          priority: state.tasks[index].priority,
-                                          date: state.tasks[index].completedAt!,
-                                          emoji:
-                                              state.tasks[index].category.emoji,
-                                          category:
-                                              state.tasks[index].category.name,
-                                          color: Colors.black,
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
+                                if (state.tasks.isEmpty) {
+                                  return Center(
+                                    child: Text(
+                                      'No tienes tareas pendientes.',
+                                      style: GoogleFonts.poppins(fontSize: 16),
+                                    ),
+                                  );
+                                } else {
+                                  return ListView.builder(
+                                    shrinkWrap: true,
+                                    physics: NeverScrollableScrollPhysics(),
+                                    itemCount: state.tasks.length,
+                                    itemBuilder: (context, index) {
+                                      return Column(
+                                        children: [
+                                          CardTaskHome(
+                                            label: state.tasks[index].title,
+                                            priority:
+                                                state.tasks[index].priority,
+                                            date:
+                                                state.tasks[index].completedAt,
+                                            emoji: state
+                                                .tasks[index]
+                                                .category
+                                                .emoji,
+                                            category: state
+                                                .tasks[index]
+                                                .category
+                                                .name,
+                                            color: hexToColor(
+                                              state.tasks[index].category.color,
+                                            ),
+                                          ),
+                                          SizedBox(height: 15)
+                                        ],
+                                      );
+                                    },
+                                  );
+                                }
                               }
                               if (state is TaskHomeError) {
                                 return Center(
                                   child: Text(
                                     state.message,
-                                    style: GoogleFonts.poppins(color: Colors.red),
+                                    style: GoogleFonts.poppins(
+                                      color: Colors.red,
+                                    ),
                                   ),
                                 );
                               }
@@ -377,5 +397,12 @@ class _HomePageViewState extends State<HomePageView> {
         SettingsPage(),
       ][currentPageIndex],
     );
+  }
+
+  Color hexToColor(String hexString) {
+    final buffer = StringBuffer();
+    if (hexString.length == 6 || hexString.length == 7) buffer.write('ff');
+    buffer.write(hexString.replaceFirst('#', ''));
+    return Color(int.parse(buffer.toString(), radix: 16));
   }
 }

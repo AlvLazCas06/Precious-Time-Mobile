@@ -8,14 +8,14 @@ class SummaryBoxWidget extends StatelessWidget {
     required this.iconColor,
     required this.label,
     this.totalTasks,
-    required this.totalProjects
+    this.totalProjects
   });
 
   final IconData icon;
   final Color iconColor;
   final String label;
   final int? totalTasks;
-  final int totalProjects;
+  final int? totalProjects;
 
   @override
   Widget build(BuildContext context) {
@@ -45,20 +45,20 @@ class SummaryBoxWidget extends StatelessWidget {
               Text(label, style: GoogleFonts.poppins(fontWeight: FontWeight.bold),)
             ],
           ),
-          Row(
+          totalTasks != null ? Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Tareas:', style: GoogleFonts.poppins()),
-              Text(totalTasks.toString(), style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 17),)
+              Text(totalTasks != null ? 'Tareas:' : '', style: GoogleFonts.poppins()),
+              Text('${totalTasks ?? ''}', style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 17),)
             ],
-          ),
-          Row(
+          ): SizedBox(),
+          totalProjects != null ? Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Proyectos:', style: GoogleFonts.poppins()),
-              Text(totalProjects.toString(), style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 17))
+              Text(totalProjects != null ? 'Proyectos:' : '', style: GoogleFonts.poppins()),
+              Text('${totalProjects ?? ''}', style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 17))
             ],
-          )
+          ) : SizedBox()
         ],
       ),
     );

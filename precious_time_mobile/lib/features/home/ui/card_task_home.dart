@@ -15,7 +15,7 @@ class CardTaskHome extends StatelessWidget {
 
   final String label;
   final String priority;
-  final String date;
+  final String? date;
   final String emoji;
   final String category;
   final Color color;
@@ -65,7 +65,7 @@ class CardTaskHome extends StatelessWidget {
             ),
             SizedBox(height: 10),
             Row(
-              children: [Icon(Icons.calendar_month_outlined), Text(date)],
+              children: [Icon(Icons.calendar_month_outlined), Text(date ?? '')],
             ),
           ],
         ),

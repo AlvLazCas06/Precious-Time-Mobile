@@ -60,35 +60,56 @@ class _TaskListPageState extends State<TaskListPage> {
                       return Center(child: CircularProgressIndicator());
                     }
                     if (state is TaskListSuccess) {
-                      return SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(height: 22),
-                            Text(
-                              '${state.tasks.length} tareas en total',
-                              style: GoogleFonts.poppins(fontSize: 16),
-                            ),
-                            SizedBox(height: 22),
-                            ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: state.tasks.length,
-                              itemBuilder: (context, index) {
-                                return TaskCard(
-                                  label: state.tasks[index].title,
-                                  description: state.tasks[index].description,
-                                  status: state.tasks[index].status,
-                                  priority: state.tasks[index].priority,
-                                  date: state.tasks[index].completedAt!,
-                                  emoji: state.tasks[index].category.emoji,
-                                  category: state.tasks[index].category.name,
-                                  color: Colors.black,
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                      );
+                      if (state.tasks.isEmpty) {
+                        return Center(
+                          child: Text(
+                            'No tienes tareas pendientes actualmente',
+                            style: GoogleFonts.poppins(fontSize: 18),
+                          ),
+                        );
+                      } else {
+                        return SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(height: 22),
+                              Text(
+                                '${state.tasks.length} tareas en total',
+                                style: GoogleFonts.poppins(fontSize: 16),
+                              ),
+                              SizedBox(height: 22),
+                              ListView.builder(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemCount: state.tasks.length,
+                                itemBuilder: (context, index) {
+                                  return Column(
+                                    children: [
+                                      TaskCard(
+                                        id: state.tasks[index].id,
+                                        label: state.tasks[index].title,
+                                        description:
+                                            state.tasks[index].description,
+                                        status: state.tasks[index].status,
+                                        priority: state.tasks[index].priority,
+                                        date: state.tasks[index].completedAt,
+                                        emoji:
+                                            state.tasks[index].category.emoji,
+                                        category:
+                                            state.tasks[index].category.name,
+                                        color: hexToColor(
+                                          state.tasks[index].category.color,
+                                        ),
+                                      ),
+                                      SizedBox(height: 20),
+                                    ],
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        );
+                      }
                     }
                     if (state is TaskListError) {
                       return Center(child: Text(state.message));
@@ -132,5 +153,12 @@ class _TaskListPageState extends State<TaskListPage> {
         ],
       ),
     );
+  }
+
+  Color hexToColor(String hexString) {
+    final buffer = StringBuffer();
+    if (hexString.length == 6 || hexString.length == 7) buffer.write('ff');
+    buffer.write(hexString.replaceFirst('#', ''));
+    return Color(int.parse(buffer.toString(), radix: 16));
   }
 }

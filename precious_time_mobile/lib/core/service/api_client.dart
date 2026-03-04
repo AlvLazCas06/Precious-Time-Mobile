@@ -67,6 +67,26 @@ class ApiClient {
     return response;
   }
 
+  Future<http.Response> patch(
+    String endpoint, {
+    Map<String, dynamic>? body,
+  }) async {
+    final url = Uri.parse('$baseUrl$endpoint');
+    final token = await _tokenManager.getToken();
+
+    final response = await http.patch(
+      url,
+      headers: {
+
+        'Content-Type': 'application/json',
+        if (token != null) 'Authorization': 'Bearer $token',
+      },
+      body: body != null ? jsonEncode(body) : null,
+    );
+
+    return response;
+  }
+
   // DELETE 
   Future<http.Response> delete(String endpoint) async {
     final url = Uri.parse('$baseUrl$endpoint');

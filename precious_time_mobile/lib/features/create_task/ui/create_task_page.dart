@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:precious_time_mobile/core/models/create_task_dto.dart';
+import 'package:precious_time_mobile/core/service/category_service.dart';
+import 'package:precious_time_mobile/core/service/task_service.dart';
+import 'package:precious_time_mobile/features/create_task/bloc/category_bloc/category_list_bloc.dart';
+import 'package:precious_time_mobile/features/create_task/bloc/task_bloc/task_create_bloc.dart';
 import 'package:precious_time_mobile/features/create_task/ui/category_card.dart';
 
 class CreateTaskPage extends StatefulWidget {
@@ -12,16 +18,20 @@ class CreateTaskPage extends StatefulWidget {
 class _CreateTaskPageState extends State<CreateTaskPage> {
   final _formKey = GlobalKey<FormState>();
   String _selectedPriority = 'Media';
-  String? _selectedCategory;
+  int? _selectedCategory;
   DateTime? _selectedDate;
+  final _titleForm = TextEditingController();
+  final _descriptionForm = TextEditingController();
+  late CategoryListBloc categoryListBloc;
+  late TaskCreateBloc taskCreateBloc;
 
-  final List<Map<String, dynamic>> _categories = [
-    {'emoji': '🎨', 'label': 'Diseño', 'color': Colors.purple},
-    {'emoji': '💻', 'label': 'Desarrollo', 'color': Colors.blue},
-    {'emoji': '📝', 'label': 'Documentación', 'color': Colors.green},
-    {'emoji': '👥', 'label': 'Reuniones', 'color': Colors.orange},
-    {'emoji': '🔍', 'label': 'Code Review', 'color': Colors.pink},
-  ];
+  @override
+  void initState() {
+    super.initState();
+    categoryListBloc = CategoryListBloc(CategoryService())
+      ..add(CategoryListFetchAllEvent());
+    taskCreateBloc = TaskCreateBloc(TaskService());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,6 +75,7 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
                 ),
                 SizedBox(height: 10),
                 TextFormField(
+                  controller: _titleForm,
                   autofocus: true,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
@@ -97,6 +108,7 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
                 ),
                 SizedBox(height: 10),
                 TextFormField(
+                  controller: _descriptionForm,
                   maxLines: 5,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
@@ -234,59 +246,83 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
                             ),
                           ],
                         ),
-                        FormField<String>(
+                        // ...existing code...
+                        FormField<int>(
                           initialValue: _selectedCategory,
                           validator: (value) {
-                            if (value == null || value.isEmpty) {
+                            if (value == null || value < 0) {
                               return 'Por favor selecciona una categoría';
                             }
                             return null;
                           },
-                          builder: (FormFieldState<String> state) {
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                GridView.builder(
-                                  shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: 2,
-                                        childAspectRatio: 2.5,
-                                        crossAxisSpacing: 12,
-                                        mainAxisSpacing: 12,
+                          builder: (FormFieldState<int> categoryFieldState) {
+                            return BlocBuilder(
+                              bloc: categoryListBloc,
+                              builder: (context, categoryState) {
+                                if (categoryState is CategoryListLoading) {
+                                  return Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                }
+                                if (categoryState is CategoryListSuccess) {
+                                  return Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      GridView.builder(
+                                        shrinkWrap: true,
+                                        physics: NeverScrollableScrollPhysics(),
+                                        gridDelegate:
+                                            SliverGridDelegateWithFixedCrossAxisCount(
+                                              crossAxisCount: 2,
+                                              childAspectRatio: 2.5,
+                                              crossAxisSpacing: 12,
+                                              mainAxisSpacing: 12,
+                                            ),
+                                        itemCount:
+                                            categoryState.categories.length,
+                                        itemBuilder: (context, index) {
+                                          final category =
+                                              categoryState.categories[index];
+                                          return CategoryCard(
+                                            color: hexToColor(category.color),
+                                            emoji: category.emoji,
+                                            label: category.name,
+                                            isSelected:
+                                                _selectedCategory ==
+                                                category.id,
+                                            onTap: () {
+                                              setState(() {
+                                                _selectedCategory = category.id;
+                                              });
+                                              categoryFieldState.didChange(
+                                                category.id,
+                                              );
+                                            },
+                                          );
+                                        },
                                       ),
-                                  itemCount: _categories.length,
-                                  itemBuilder: (context, index) {
-                                    final category = _categories[index];
-                                    return CategoryCard(
-                                      color: category['color'],
-                                      emoji: category['emoji'],
-                                      label: category['label'],
-                                      isSelected:
-                                          _selectedCategory ==
-                                          category['label'],
-                                      onTap: () {
-                                        setState(() {
-                                          _selectedCategory = category['label'];
-                                        });
-                                        state.didChange(category['label']);
-                                      },
-                                    );
-                                  },
-                                ),
-                                if (state.hasError)
-                                  Padding(
-                                    padding: EdgeInsets.only(top: 8, left: 12),
-                                    child: Text(
-                                      state.errorText!,
-                                      style: TextStyle(
-                                        color: Colors.red,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  ),
-                              ],
+                                      if (categoryFieldState.hasError)
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                            top: 8,
+                                            left: 12,
+                                          ),
+                                          child: Text(
+                                            categoryFieldState.errorText!,
+                                            style: TextStyle(
+                                              color: Colors.red,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ),
+                                    ],
+                                  );
+                                }
+                                return Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              },
                             );
                           },
                         ),
@@ -307,61 +343,123 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
                   ],
                 ),
                 SizedBox(height: 10),
-                InkWell(
-                  onTap: () async {
-                    final date = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime.now(),
-                      lastDate: DateTime(2030),
-                    );
-                    if (date != null) {
-                      setState(() => _selectedDate = date);
+                FormField<DateTime>(
+                  validator: (value) {
+                    if (_selectedDate == null) {
+                      return 'Por favor selecciona una fecha';
                     }
+                    return null;
                   },
-                  child: Container(
-                    padding: EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(
-                        color: Color.fromARGB(255, 209, 213, 220),
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  builder: (FormFieldState<DateTime> dateState) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          _selectedDate == null
-                              ? 'Selecciona una fecha'
-                              : '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}',
-                          style: GoogleFonts.poppins(
-                            fontSize: 16,
-                            color: _selectedDate == null
-                                ? Colors.grey
-                                : Colors.black87,
+                        InkWell(
+                          onTap: () async {
+                            final date = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime.now(),
+                              lastDate: DateTime(2030),
+                            );
+                            if (date != null) {
+                              setState(() => _selectedDate = date);
+                              dateState.didChange(date);
+                            }
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                color: dateState.hasError
+                                    ? Colors.red
+                                    : Color.fromARGB(255, 209, 213, 220),
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  _selectedDate == null
+                                      ? 'Selecciona una fecha'
+                                      : '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 16,
+                                    color: _selectedDate == null
+                                        ? Colors.grey
+                                        : Colors.black87,
+                                  ),
+                                ),
+                                Icon(Icons.calendar_today, color: Colors.grey),
+                              ],
+                            ),
                           ),
                         ),
-                        Icon(Icons.calendar_today, color: Colors.grey),
+                        if (dateState.hasError)
+                          Padding(
+                            padding: EdgeInsets.only(top: 8, left: 12),
+                            child: Text(
+                              dateState.errorText!,
+                              style: TextStyle(color: Colors.red, fontSize: 12),
+                            ),
+                          ),
                       ],
-                    ),
-                  ),
+                    );
+                  },
                 ),
                 SizedBox(height: 30),
-                SizedBox(
-                  width: double.infinity,
-                  child: FloatingActionButton(
-                    onPressed: () {},
-                    backgroundColor: Color.fromARGB(255, 21, 93, 252),
-                    child: Text(
-                      'Crear Tarea',
-                      style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.white,
+                BlocConsumer<TaskCreateBloc, TaskCreateState>(
+                  bloc: taskCreateBloc,
+                  listener: (context, state) {
+                    if (state is TaskCreateSuccess) {
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Tarea creada exitosamente')),
+                      );
+                    }
+                    if (state is TaskCreateError) {
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(SnackBar(content: Text(state.message)));
+                    }
+                  },
+                  builder: (context, state) {
+                    return SizedBox(
+                      width: double.infinity,
+                      child: FloatingActionButton(
+                        onPressed: state is TaskCreateLoading
+                            ? null
+                            : () {
+                                if (_formKey.currentState!.validate()) {
+                                  taskCreateBloc.add(
+                                    TaskCreateFetchEvent(
+                                      createTaskDto: CreateTaskDto(
+                                        categoryId: _selectedCategory!,
+                                        title: _titleForm.text,
+                                        description: _descriptionForm.text,
+                                        priority: _selectedPriority,
+                                        completedAt: _selectedDate!,
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
+                        backgroundColor: Color.fromARGB(255, 21, 93, 252),
+                        child: state is TaskCreateLoading
+                            ? CircularProgressIndicator(color: Colors.white)
+                            : Text(
+                                'Crear Tarea',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.white,
+                                ),
+                              ),
                       ),
-                    ),
-                  ),
+                    );
+                  },
                 ),
               ],
             ),
@@ -369,5 +467,12 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
         ),
       ),
     );
+  }
+
+  Color hexToColor(String hexString) {
+    final buffer = StringBuffer();
+    if (hexString.length == 6 || hexString.length == 7) buffer.write('ff');
+    buffer.write(hexString.replaceFirst('#', ''));
+    return Color(int.parse(buffer.toString(), radix: 16));
   }
 }

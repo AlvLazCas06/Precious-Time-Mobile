@@ -35,7 +35,7 @@ class TaskSubCard extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: 7.5),
-                Text(label, style: GoogleFonts.poppins()),
+                Text(label.substring(0, 1).toUpperCase() + label.substring(1).toLowerCase(), style: GoogleFonts.poppins()),
               ],
             ),
           )
@@ -63,7 +63,7 @@ class TaskSubCard extends StatelessWidget {
                   ],
                 ),
                 SizedBox(width: 7.5),
-                Text(label, style: GoogleFonts.poppins()),
+                Text(label.substring(0, 1).toUpperCase() + label.substring(1).toLowerCase(), style: GoogleFonts.poppins()),
               ],
             ),
           );
