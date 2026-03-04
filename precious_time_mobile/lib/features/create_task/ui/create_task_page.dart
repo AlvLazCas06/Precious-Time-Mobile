@@ -246,7 +246,6 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
                             ),
                           ],
                         ),
-                        // ...existing code...
                         FormField<int>(
                           initialValue: _selectedCategory,
                           validator: (value) {

@@ -4,8 +4,8 @@ import 'package:flutter_switch/flutter_switch.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:precious_time_mobile/core/service/preference_service.dart';
 import 'package:precious_time_mobile/core/service/user_service.dart';
-import 'package:precious_time_mobile/features/settings/preference_bloc/bloc/preference_bloc.dart';
-import 'package:precious_time_mobile/features/settings/user_bloc/bloc/user_bloc.dart';
+import 'package:precious_time_mobile/features/settings/bloc/preference_bloc/preference_bloc.dart';
+import 'package:precious_time_mobile/features/settings/bloc/user_bloc/user_bloc.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});

@@ -97,7 +97,7 @@ class _LoginState extends State<Login> {
                       children: [
                         // Campo de correo electrónico
                         const Text(
-                          'Correo electrónico',
+                          'Username',
                           style: TextStyle(
                             fontSize: 14,
                             color: Color(0xFF374151),

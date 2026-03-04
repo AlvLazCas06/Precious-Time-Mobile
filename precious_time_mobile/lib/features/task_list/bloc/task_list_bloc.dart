@@ -17,5 +17,25 @@ class TaskListBloc extends Bloc<TaskListEvent, TaskListState> {
         emit(TaskListError(message: e.toString()));
       }
     });
+
+    on<TaskDeleteEvent>((event, emit) async {
+      emit(TaskListLoading());
+      try {
+        await taskService.deleteTask(event.id);
+        emit(TaskDeleteSuccess());
+      } catch (e) {
+        emit(TaskListError(message: e.toString()));
+      }
+    });
+
+    on<TaskCompleteEvent>((event, emit) async {
+      emit(TaskListLoading());
+      try {
+        await taskService.checkCompleted(event.id);
+        emit(TaskCompleteSuccess());
+      } catch (e) {
+        emit(TaskListError(message: e.toString()));
+      }
+    });
   }
 }

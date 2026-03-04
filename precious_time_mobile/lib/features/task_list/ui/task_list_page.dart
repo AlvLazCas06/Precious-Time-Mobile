@@ -86,6 +86,7 @@ class _TaskListPageState extends State<TaskListPage> {
                                   return Column(
                                     children: [
                                       TaskCard(
+                                        taskListBloc: taskListBloc,
                                         id: state.tasks[index].id,
                                         label: state.tasks[index].title,
                                         description:
@@ -99,6 +100,7 @@ class _TaskListPageState extends State<TaskListPage> {
                                             state.tasks[index].category.name,
                                         color: hexToColor(
                                           state.tasks[index].category.color,
+                                        
                                         ),
                                       ),
                                       SizedBox(height: 20),

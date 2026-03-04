@@ -14,6 +14,10 @@ final class TaskListSuccess extends TaskListState {
   final List<Task> tasks;
 }
 
+final class TaskDeleteSuccess extends TaskListState {}
+
+final class TaskCompleteSuccess extends TaskListState {}
+
 final class TaskListError extends TaskListState {
   TaskListError({
     required this.message

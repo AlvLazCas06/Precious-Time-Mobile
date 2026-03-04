@@ -20,6 +20,7 @@ class ProjectCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: 360,
       padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
