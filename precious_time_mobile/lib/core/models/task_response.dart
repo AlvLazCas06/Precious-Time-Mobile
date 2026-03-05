@@ -51,11 +51,13 @@ class TaskResponse {
 }
 
 class Category {
+  final int id;
   final String name;
   final String emoji;
   final String color;
 
   Category({
+    required this.id,
     required this.name,
     required this.emoji,
     required this.color,
@@ -63,6 +65,7 @@ class Category {
 
   factory Category.fromJson(Map<String, dynamic> json) {
     return Category(
+      id: json['id'],
       name: json['name'],
       emoji: json['emoji'],
       color: json['color'],
@@ -71,6 +74,7 @@ class Category {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'name': name,
       'emoji': emoji,
       'color': color,

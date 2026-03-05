@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:precious_time_mobile/core/models/create_project_dto.dart';
+import 'package:precious_time_mobile/core/service/project_service.dart';
+import 'package:precious_time_mobile/features/create_project/bloc/project_create_bloc.dart';
 
 class CreateProjectPage extends StatefulWidget {
   const CreateProjectPage({super.key});
@@ -14,6 +19,13 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
   final _descriptionController = TextEditingController();
   DateTime? _startDate;
   DateTime? _endDate;
+  late ProjectCreateBloc projectCreateBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    projectCreateBloc = ProjectCreateBloc(ProjectService());
+  }
 
   @override
   void dispose() {
@@ -22,42 +34,16 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
     super.dispose();
   }
 
-  Future<void> _selectStartDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
+  Future<DateTime?> _pickDate(
+    BuildContext context, {
+    DateTime? firstDate,
+  }) async {
+    return showDatePicker(
       context: context,
-      initialDate: _startDate ?? DateTime.now(),
-      firstDate: DateTime(2000),
+      initialDate: DateTime.now(),
+      firstDate: firstDate ?? DateTime(2000),
       lastDate: DateTime(2100),
     );
-    if (picked != null && picked != _startDate) {
-      setState(() {
-        _startDate = picked;
-      });
-    }
-  }
-
-  Future<void> _selectEndDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: _endDate ?? DateTime.now(),
-      firstDate: _startDate ?? DateTime(2000),
-      lastDate: DateTime(2100),
-    );
-    if (picked != null && picked != _endDate) {
-      setState(() {
-        _endDate = picked;
-      });
-    }
-  }
-
-  void _createProject() {
-    if (_formKey.currentState!.validate()) {
-      // Aquí se implementaría la lógica para crear el proyecto
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Proyecto creado exitosamente')),
-      );
-      Navigator.pop(context);
-    }
   }
 
   @override
@@ -66,234 +52,252 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: const Text(
+        title: Text(
           'Nuevo Proyecto',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
+          style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
         ),
       ),
-      body: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Nombre del proyecto
-              const Text(
-                'Nombre del proyecto *',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.black87,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 8),
-              TextFormField(
-                controller: _nameController,
-                decoration: InputDecoration(
-                  hintText: 'Ej. Rediseño de la aplicación móvil',
-                  hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
-                  filled: true,
-                  fillColor: Colors.grey[50],
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: Colors.grey[300]!),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: Colors.grey[300]!),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: const BorderSide(color: Colors.blue, width: 2),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor ingrese el nombre del proyecto';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 24),
-
-              // Descripción
-              const Text(
-                'Descripción',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.black87,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 8),
-              TextFormField(
-                controller: _descriptionController,
-                maxLines: 5,
-                decoration: InputDecoration(
-                  hintText: 'Describe los objetivos y\nalcance del proyecto...',
-                  hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
-                  filled: true,
-                  fillColor: Colors.grey[50],
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: Colors.grey[300]!),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: Colors.grey[300]!),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: const BorderSide(color: Colors.blue, width: 2),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 24),
-
-              // Fechas
-              Row(
-                children: [
-                  // Fecha de inicio
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.calendar_today,
-                                size: 16, color: Colors.grey[700]),
-                            const SizedBox(width: 4),
-                            const Text(
-                              'Fecha de inicio',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.black87,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        InkWell(
-                          onTap: () => _selectStartDate(context),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 12,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.grey[50],
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: Colors.grey[300]!),
-                            ),
-                            child: Text(
-                              _startDate != null
-                                  ? DateFormat('dd/MM/yyyy').format(_startDate!)
-                                  : '',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: _startDate != null
-                                    ? Colors.black87
-                                    : Colors.grey[400],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+      body: SingleChildScrollView(
+        child: Form(
+          key: _formKey,
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            decoration: const BoxDecoration(
+              color: Color.fromARGB(255, 249, 250, 251),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      'Nombre del proyecto ',
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 16),
-
-                  // Fecha de fin
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.calendar_today,
-                                size: 16, color: Colors.grey[700]),
-                            const SizedBox(width: 4),
-                            const Text(
-                              'Fecha de fin',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.black87,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        InkWell(
-                          onTap: () => _selectEndDate(context),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 12,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.grey[50],
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: Colors.grey[300]!),
-                            ),
-                            child: Text(
-                              _endDate != null
-                                  ? DateFormat('dd/MM/yyyy').format(_endDate!)
-                                  : '',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: _endDate != null
-                                    ? Colors.black87
-                                    : Colors.grey[400],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+                    Text(
+                      '*',
+                      style: GoogleFonts.poppins(
+                        color: Colors.red,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 32),
-
-              // Botón Crear Proyecto
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: _createProject,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF2563EB),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                TextFormField(
+                  controller: _nameController,
+                  maxLength: 50,
+                  autofocus: true,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: const BorderSide(
+                        color: Color.fromARGB(255, 209, 213, 220),
+                      ),
                     ),
-                    elevation: 0,
-                  ),
-                  child: const Text(
-                    'Crear Proyecto',
-                    style: TextStyle(
+                    hintText: 'Ej. Rediseño de la aplicación móvil',
+                    hintStyle: GoogleFonts.poppins(
                       fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
+                      color: const Color.fromARGB(255, 153, 161, 175),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
                     ),
                   ),
+                  style: GoogleFonts.poppins(fontSize: 16),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Por favor ingrese el nombre del proyecto';
+                    }
+                    if (value.length > 255) {
+                      return 'El número de carácteres es mayor al permitido';
+                    }
+                    return null;
+                  },
                 ),
-              ),
-            ],
+                const SizedBox(height: 25),
+                Text(
+                  'Descripción',
+                  style: GoogleFonts.poppins(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                TextFormField(
+                  controller: _descriptionController,
+                  maxLines: 5,
+                  maxLength: 1000,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: const BorderSide(
+                        color: Color.fromARGB(255, 209, 213, 220),
+                      ),
+                    ),
+                    hintText:
+                        'Describe los objetivos y\nalcance del proyecto...',
+                    hintStyle: GoogleFonts.poppins(
+                      fontSize: 16,
+                      color: const Color.fromARGB(255, 153, 161, 175),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 16,
+                    ),
+                    alignLabelWithHint: true,
+                  ),
+                  style: GoogleFonts.poppins(fontSize: 16),
+                  validator: (value) {
+                    if (value != null && value.length > 2000) {
+                      return 'Has excedido el número máximo de carácteres';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 30),
+                Row(
+                  children: [
+                    const Icon(Icons.calendar_today_outlined, size: 16),
+                    Text(
+                      ' Fecha de fin',
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                FormField<DateTime>(
+                  validator: (_) {
+                    if (_endDate == null) {
+                      return 'Por favor selecciona una fecha de fin';
+                    }
+                    return null;
+                  },
+                  builder: (FormFieldState<DateTime> endState) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        InkWell(
+                          onTap: () async {
+                            final picked = await _pickDate(
+                              context,
+                              firstDate: _startDate ?? DateTime(2000),
+                            );
+                            if (picked != null) {
+                              setState(() => _endDate = picked);
+                              endState.didChange(picked);
+                            }
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                color: endState.hasError
+                                    ? Colors.red
+                                    : const Color.fromARGB(255, 209, 213, 220),
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  _endDate == null
+                                      ? 'Selecciona una fecha'
+                                      : DateFormat(
+                                          'dd/MM/yyyy',
+                                        ).format(_endDate!),
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 16,
+                                    color: _endDate == null
+                                        ? Colors.grey
+                                        : Colors.black87,
+                                  ),
+                                ),
+                                const Icon(
+                                  Icons.calendar_today,
+                                  color: Colors.grey,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        if (endState.hasError)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8, left: 12),
+                            child: Text(
+                              endState.errorText!,
+                              style: const TextStyle(
+                                color: Colors.red,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                      ],
+                    );
+                  },
+                ),
+                const SizedBox(height: 30),
+                BlocConsumer<ProjectCreateBloc, ProjectCreateState>(
+                  bloc: projectCreateBloc,
+                  listener: (context, state) {
+                    if (state is ProjectCreateSuccess) {
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Tarea creada exitosamente')),
+                      );
+                    }
+                    if (state is ProjectCreateError) {
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(SnackBar(content: Text(state.message)));
+                    }
+                  },
+                  builder: (context, state) {
+                    return SizedBox(
+                      width: double.infinity,
+                      child: FloatingActionButton(
+                        onPressed: state is ProjectCreateLoading
+                            ? null
+                            : () {
+                                if (_formKey.currentState!.validate()) {
+                                  projectCreateBloc.add(
+                                    ProjectCreateFetchEvent(
+                                      dto: CreateProjectDto(
+                                        name: _nameController.text,
+                                        description: _descriptionController.text,
+                                        finishDate: _endDate!
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
+                        backgroundColor: Color.fromARGB(255, 21, 93, 252),
+                        child: state is ProjectCreateLoading
+                            ? CircularProgressIndicator(color: Colors.white)
+                            : Text(
+                                'Crear Proyecto',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.white,
+                                ),
+                              ),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),

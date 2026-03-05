@@ -78,7 +78,6 @@ class _LoginState extends State<Login> {
                   ),
                   const SizedBox(height: 40),
 
-                  // Card con formulario
                   Container(
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
@@ -95,7 +94,6 @@ class _LoginState extends State<Login> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Campo de correo electrónico
                         const Text(
                           'Username',
                           style: TextStyle(
@@ -109,7 +107,7 @@ class _LoginState extends State<Login> {
                           controller: _emailController,
                           keyboardType: TextInputType.emailAddress,
                           decoration: InputDecoration(
-                            hintText: 'maria@ejemplo.com',
+                            hintText: 'mariaaa',
                             hintStyle: const TextStyle(
                               color: Color(0xFF9CA3AF),
                             ),
@@ -142,7 +140,6 @@ class _LoginState extends State<Login> {
                         ),
                         const SizedBox(height: 20),
 
-                        // Campo de contraseña
                         const Text(
                           'Contraseña',
                           style: TextStyle(

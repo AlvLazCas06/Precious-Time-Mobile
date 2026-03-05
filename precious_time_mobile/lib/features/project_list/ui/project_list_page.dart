@@ -56,23 +56,31 @@ class _ProjectListPageState extends State<ProjectListPage> {
                       return Center(child: CircularProgressIndicator());
                     }
                     if (state is ProjectListSuccess) {
-                      return ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: state.projects.length,
-                        itemBuilder: (context, index) {
-                          return Column(
-                            children: [
-                              ProjectCard(
-                                label: state.projects[index].name,
-                                description: state.projects[index].description,
-                                percent: state.projects[index].progress,
-                                startDate: state.projects[index].startDate,
-                                finishDate: state.projects[index].finishDate,
-                              ),
-                              SizedBox(height: 20),
-                            ],
-                          );
-                        },
+                      return Column(
+                        children: [
+                          SizedBox(height: 10),
+                          Expanded(
+                            child: ListView.builder(
+                              itemCount: state.projects.length,
+                              itemBuilder: (context, index) {
+                                return Column(
+                                  children: [
+                                    ProjectCard(
+                                      label: state.projects[index].name,
+                                      description:
+                                          state.projects[index].description,
+                                      percent: state.projects[index].progress,
+                                      startDate: state.projects[index].startDate,
+                                      finishDate:
+                                          state.projects[index].finishDate,
+                                    ),
+                                    SizedBox(height: 20),
+                                  ],
+                                );
+                              },
+                            ),
+                          ),
+                        ],
                       );
                     }
                     if (state is ProjectListError) {
@@ -82,7 +90,6 @@ class _ProjectListPageState extends State<ProjectListPage> {
                   },
                 ),
                 Positioned(
-                  
                   bottom: 20,
                   right: 20,
                   child: Container(

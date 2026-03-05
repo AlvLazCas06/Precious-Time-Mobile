@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:precious_time_mobile/core/interface/project_interface.dart';
+import 'package:precious_time_mobile/core/models/create_project_dto.dart';
 import 'package:precious_time_mobile/core/models/project_list_response.dart';
+import 'package:precious_time_mobile/core/models/project_response.dart';
 import 'package:precious_time_mobile/core/models/projects_summary_list_response.dart';
 import 'package:precious_time_mobile/core/service/api_client.dart';
 import 'package:precious_time_mobile/core/service/token_manager.dart';
@@ -37,6 +39,21 @@ class ProjectService implements ProjectInterface {
         return projects;
       }
       return [];
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  @override
+  Future<ProjectResponse> createProject(CreateProjectDto dto) async {
+    try {
+      var response = await _apiClient.post(_endpoint, body: dto.toJson());
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return ProjectResponse.fromJson(jsonDecode(response.body));
+      }
+      Map<String, dynamic> map = jsonDecode(response.body);
+      String invalidParams = map['invalid-params'].toString();
+      throw Exception('Error al crear el proyecto: $invalidParams');
     } catch (e) {
       throw Exception(e.toString());
     }

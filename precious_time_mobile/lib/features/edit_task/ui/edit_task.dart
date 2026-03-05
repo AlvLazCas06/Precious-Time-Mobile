@@ -55,6 +55,7 @@ class _EditTaskState extends State<EditTask> {
           if (state is TaskSuccess && !_initialized) {
             _initialized = true;
             setState(() {
+              _selectedCategory = state.taskResponse.category.id;
               _titleForm.text = state.taskResponse.title;
               _descriptionForm.text = state.taskResponse.description;
               _selectedPriority =
