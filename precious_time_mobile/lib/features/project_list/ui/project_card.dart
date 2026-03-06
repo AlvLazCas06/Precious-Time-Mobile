@@ -4,26 +4,33 @@ import 'package:google_fonts/google_fonts.dart';
 class ProjectCard extends StatelessWidget {
   const ProjectCard({
     super.key,
+    required this.id,
     required this.label,
     required this.description,
+    required this.status,
     required this.percent,
     required this.startDate,
     required this.finishDate,
+    this.isDark = false,
   });
 
+  final int id;
   final String label;
   final String description;
+  final String status;
   final double percent;
   final String? startDate;
   final String? finishDate;
+  final bool isDark;
 
   @override
   Widget build(BuildContext context) {
+    final textColor = isDark ? Colors.white : null;
     return Container(
       width: 360,
       padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? const Color(0xFF364153) : Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -50,6 +57,7 @@ class ProjectCard extends StatelessWidget {
                   style: GoogleFonts.poppins(
                     fontWeight: FontWeight.w700,
                     fontSize: 18,
+                    color: textColor,
                   ),
                 ),
               ),
@@ -57,14 +65,18 @@ class ProjectCard extends StatelessWidget {
                 width: 110,
                 height: 30,
                 decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 219, 234, 254),
+                  color: status == 'en proceso' ? Color.fromARGB(255, 219, 234, 254) : status == 'completado' ? Color.fromARGB(255, 231, 251, 239) : const Color.fromARGB(255, 255, 162, 162),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Center(
                   child: Text(
-                    'En proceso',
+                    status.substring(0, 1).toUpperCase() + status.substring(1),
                     style: GoogleFonts.poppins(
-                      color: Color.fromARGB(255, 20, 71, 230),
+                      color: status == 'en proceso'
+                          ? Color.fromARGB(255, 20, 71, 230)
+                          : status == 'completado'
+                          ? Colors.green
+                          : Colors.red,
                       fontWeight: FontWeight.w600,
                     ),
                     textAlign: TextAlign.center,
@@ -74,14 +86,57 @@ class ProjectCard extends StatelessWidget {
             ],
           ),
           SizedBox(height: 12),
-          SizedBox(
-            width: 200,
-            child: Text(
-              'Rediseño completo de la interfaz de usuario de la aplicación móvil principal.',
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.poppins(),
-            ),
+          Row(
+            children: [
+              SizedBox(
+                width: 200,
+                child: Text(
+                  description,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.poppins(color: textColor),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: .spaceEvenly,
+                children: [
+                  SizedBox(
+                    width: 37.5,
+                    height: 37.5,
+                    child: FloatingActionButton(
+                      heroTag: 'edit_$id',
+                      onPressed: () {
+                        String id = this.id.toString();
+                        Navigator.pushNamed(
+                          context,
+                          '/project/edit',
+                          arguments: id,
+                        );
+                      },
+                      backgroundColor: Colors.amber,
+                      child: Icon(Icons.edit, color: Colors.white, size: 20),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 37.5,
+                    height: 37.5,
+                    child: FloatingActionButton(
+                      heroTag: 'view_$id',
+                      onPressed: () {
+                        String id = this.id.toString();
+                        Navigator.pushNamed(context, '/project', arguments: id);
+                      },
+                      backgroundColor: Colors.blue,
+                      child: Icon(
+                        Icons.visibility_rounded,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
           SizedBox(height: 15),
           Row(
@@ -89,9 +144,9 @@ class ProjectCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Icon(Icons.trending_up, size: 18),
+                  Icon(Icons.trending_up, size: 18, color: textColor),
                   SizedBox(width: 5),
-                  Text('Progreso', style: GoogleFonts.poppins(fontSize: 14)),
+                  Text('Progreso', style: GoogleFonts.poppins(fontSize: 14, color: textColor)),
                 ],
               ),
               Text(
@@ -99,6 +154,7 @@ class ProjectCard extends StatelessWidget {
                 style: GoogleFonts.poppins(
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
+                  color: textColor,
                 ),
               ),
             ],
@@ -120,19 +176,19 @@ class ProjectCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Icon(Icons.calendar_month, size: 18),
+                  Icon(Icons.calendar_month, size: 18, color: textColor),
                   Text(
                     'Inicio: $startDate',
-                    style: GoogleFonts.poppins(fontSize: 16),
+                    style: GoogleFonts.poppins(fontSize: 16, color: textColor),
                   ),
                 ],
               ),
               Row(
                 children: [
-                  Icon(Icons.calendar_month, size: 18),
+                  Icon(Icons.calendar_month, size: 18, color: textColor),
                   Text(
                     finishDate == null ? 'Sin terminar' : 'Fin: $finishDate',
-                    style: GoogleFonts.poppins(fontSize: 16),
+                    style: GoogleFonts.poppins(fontSize: 16, color: textColor),
                   ),
                 ],
               ),

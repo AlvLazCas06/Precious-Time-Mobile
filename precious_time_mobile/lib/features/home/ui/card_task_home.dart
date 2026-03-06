@@ -11,6 +11,7 @@ class CardTaskHome extends StatelessWidget {
     required this.emoji,
     required this.category,
     required this.color,
+    this.isDark = false,
   });
 
   final String label;
@@ -19,13 +20,15 @@ class CardTaskHome extends StatelessWidget {
   final String emoji;
   final String category;
   final Color color;
+  final bool isDark;
 
   @override
   Widget build(BuildContext context) {
+    final textColor = isDark ? Colors.white : null;
     return Container(
       padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? const Color(0xFF364153) : Colors.white,
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
@@ -46,6 +49,7 @@ class CardTaskHome extends StatelessWidget {
               style: GoogleFonts.poppins(
                 fontWeight: FontWeight.w500,
                 fontSize: 18,
+                color: textColor,
               ),
             ),
             SizedBox(height: 10),
@@ -65,7 +69,10 @@ class CardTaskHome extends StatelessWidget {
             ),
             SizedBox(height: 10),
             Row(
-              children: [Icon(Icons.calendar_month_outlined), Text(date ?? '')],
+              children: [
+                Icon(Icons.calendar_month_outlined, color: textColor),
+                Text(date ?? '', style: GoogleFonts.poppins(color: textColor)),
+              ],
             ),
           ],
         ),

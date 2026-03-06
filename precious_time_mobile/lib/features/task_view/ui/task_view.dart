@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:precious_time_mobile/core/models/task_response.dart';
 import 'package:precious_time_mobile/core/service/task_service.dart';
 import 'package:precious_time_mobile/features/task_view/bloc/task_view_bloc.dart';
 
@@ -15,6 +16,7 @@ class TaskView extends StatefulWidget {
 
 class _TaskViewState extends State<TaskView> {
   late TaskViewBloc taskViewBloc;
+  TaskResponse? _task;
 
   @override
   void initState() {
@@ -30,10 +32,26 @@ class _TaskViewState extends State<TaskView> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder(
+    return BlocConsumer<TaskViewBloc, TaskViewState>(
       bloc: taskViewBloc,
+      listener: (context, state) {
+        if (state is TaskViewSuccess) {
+          setState(() => _task = state.taskResponse);
+        }
+        if (state is TaskCompletedSuccess) {
+          Navigator.pop(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Tarea completada exitosamente')),
+          );
+        }
+        if (state is TaskViewError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message)),
+          );
+        }
+      },
       builder: (context, state) {
-        if (state is TaskViewLoading) {
+        if (_task == null) {
           return Scaffold(
             backgroundColor: Colors.white,
             appBar: AppBar(
@@ -43,15 +61,21 @@ class _TaskViewState extends State<TaskView> {
                 style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
               ),
             ),
-            body: const Center(child: CircularProgressIndicator()),
+            body: state is TaskViewError
+                ? Center(
+                    child: Text(
+                      state.message,
+                      style: GoogleFonts.poppins(fontSize: 16),
+                    ),
+                  )
+                : const Center(child: CircularProgressIndicator()),
           );
         }
 
-        if (state is TaskViewSuccess) {
-          final task = state.taskResponse;
-          final categoryColor = hexToColor(task.category.color);
+        final task = _task!;
+        final categoryColor = hexToColor(task.category.color);
 
-          return Scaffold(
+        return Scaffold(
             backgroundColor: Colors.white,
             appBar: AppBar(
               backgroundColor: Colors.white,
@@ -205,79 +229,31 @@ class _TaskViewState extends State<TaskView> {
                         ],
                       ),
                     ),
-                    SizedBox(height: 12),
-                    BlocConsumer<TaskViewBloc, TaskViewState>(
-                      bloc: taskViewBloc,
-                      listener: (context, state) {
-                        if (state is TaskCompletedSuccess) {
-                          Navigator.pop(context);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Tarea completeda exitosamente'),
-                            ),
-                          );
-                        }
-                        if (state is TaskViewError) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(state.message)),
-                          );
-                        }
-                      },
-                      builder: (context, state) {
-                        return SizedBox(
-                          width: double.infinity,
-                          child: FloatingActionButton(
-                            onPressed: state is TaskViewLoading
-                                ? null
-                                : () {
-                                    taskViewBloc.add(
-                                      TaskCheckCompleteEvent(id: int.parse(widget.id)),
-                                    );
-                                  },
-                            backgroundColor:Color.fromARGB(255, 100, 221, 148),
-
-                            child: Text('Completar tarea', style: GoogleFonts.poppins(color: Colors.white),),
-                          ),
-                        );
-                      },
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: double.infinity,
+                      child: FloatingActionButton(
+                        onPressed: state is TaskViewLoading
+                            ? null
+                            : () {
+                                taskViewBloc.add(
+                                  TaskCheckCompleteEvent(id: int.parse(widget.id)),
+                                );
+                              },
+                        backgroundColor: const Color.fromARGB(255, 100, 221, 148),
+                        child: state is TaskViewLoading
+                            ? const CircularProgressIndicator(color: Colors.white)
+                            : Text(
+                                'Completar tarea',
+                                style: GoogleFonts.poppins(color: Colors.white),
+                              ),
+                      ),
                     ),
                   ],
                 ),
               ),
             ),
           );
-        }
-
-        if (state is TaskViewError) {
-          return Scaffold(
-            backgroundColor: Colors.white,
-            appBar: AppBar(
-              backgroundColor: Colors.white,
-              title: Text(
-                'Detalle de tarea',
-                style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
-              ),
-            ),
-            body: Center(
-              child: Text(
-                state.message,
-                style: GoogleFonts.poppins(fontSize: 16),
-              ),
-            ),
-          );
-        }
-
-        return Scaffold(
-          backgroundColor: Colors.white,
-          appBar: AppBar(
-            backgroundColor: Colors.white,
-            title: Text(
-              'Detalle de tarea',
-              style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
-            ),
-          ),
-          body: const Center(child: CircularProgressIndicator()),
-        );
       },
     );
   }

@@ -278,13 +278,18 @@ class _LoginState extends State<Login> {
                           minimumSize: Size.zero,
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         ),
-                        child: const Text(
-                          'Crear cuenta',
+                        child: TextButton(
+                          onPressed: () {
+                            setState(() {
+                              Navigator.pushNamed(context, '/register');
+                            });
+                          },
+                          child: Text('Crear cuenta',
                           style: TextStyle(
                             color: Color(0xFF2B7CFF),
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                          ),
+                          )),
                         ),
                       ),
                     ],

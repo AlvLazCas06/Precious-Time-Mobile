@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:precious_time_mobile/core/models/preference_response.dart';
 import 'package:precious_time_mobile/core/service/project_service.dart';
 import 'package:precious_time_mobile/features/project_list/bloc/project_list_bloc.dart';
 import 'package:precious_time_mobile/features/project_list/ui/project_card.dart';
 
 class ProjectListPage extends StatefulWidget {
-  const ProjectListPage({super.key});
+  const ProjectListPage({super.key, this.preference});
+
+  final PreferenceResponse? preference;
 
   @override
   State<ProjectListPage> createState() => _ProjectListPageState();
@@ -32,7 +35,11 @@ class _ProjectListPageState extends State<ProjectListPage> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(14),
-      decoration: BoxDecoration(color: Color.fromARGB(255, 249, 250, 251)),
+      decoration: BoxDecoration(
+        color: widget.preference?.theme == 'dark'
+            ? const Color(0xFF1E2939)
+            : const Color.fromARGB(255, 249, 250, 251),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -41,9 +48,15 @@ class _ProjectListPageState extends State<ProjectListPage> {
             style: GoogleFonts.poppins(
               fontWeight: FontWeight.bold,
               fontSize: 24,
+              color: widget.preference?.theme == 'dark' ? Colors.white : null,
             ),
           ),
-          Text('proyectos activos', style: GoogleFonts.poppins()),
+          Text(
+            'proyectos activos',
+            style: GoogleFonts.poppins(
+              color: widget.preference?.theme == 'dark' ? Colors.white : null,
+            ),
+          ),
           SizedBox(height: 20),
           Expanded(
             child: Stack(
@@ -66,13 +79,17 @@ class _ProjectListPageState extends State<ProjectListPage> {
                                 return Column(
                                   children: [
                                     ProjectCard(
+                                      id: state.projects[index].id,
                                       label: state.projects[index].name,
                                       description:
                                           state.projects[index].description,
+                                      status: state.projects[index].status,
                                       percent: state.projects[index].progress,
-                                      startDate: state.projects[index].startDate,
+                                      startDate:
+                                          state.projects[index].startDate,
                                       finishDate:
                                           state.projects[index].finishDate,
+                                      isDark: widget.preference?.theme == 'dark',
                                     ),
                                     SizedBox(height: 20),
                                   ],

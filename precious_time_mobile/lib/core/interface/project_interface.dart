@@ -7,4 +7,7 @@ abstract class ProjectInterface {
   Future<List<Project>> getProjects();
   Future<List<ProjectSummary>> getSummaryProjects();
   Future<ProjectResponse> createProject(CreateProjectDto dto);
+  Future<ProjectResponse> getProject(int id);
+  Future<ProjectResponse> editProject(int id, CreateProjectDto dto);
+  Future<ProjectResponse> cancelProject(int id);
 }

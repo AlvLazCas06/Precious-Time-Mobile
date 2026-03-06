@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:precious_time_mobile/core/models/preference_response.dart';
+import 'package:precious_time_mobile/core/service/preference_service.dart';
 import 'package:precious_time_mobile/core/service/project_service.dart';
 import 'package:precious_time_mobile/core/service/task_service.dart';
 import 'package:precious_time_mobile/core/service/user_service.dart';
@@ -13,6 +15,7 @@ import 'package:precious_time_mobile/features/home/ui/app_bar_precious_time.dart
 import 'package:precious_time_mobile/features/home/ui/card_task_home.dart';
 import 'package:precious_time_mobile/features/home/ui/summary_box_widget.dart';
 import 'package:precious_time_mobile/features/project_list/ui/project_list_page.dart';
+import 'package:precious_time_mobile/features/settings/bloc/preference_bloc/preference_bloc.dart';
 import 'package:precious_time_mobile/features/settings/ui/settings_page.dart';
 import 'package:precious_time_mobile/features/task_list/ui/task_list_page.dart';
 
@@ -28,22 +31,51 @@ class _HomePageViewState extends State<HomePageView> {
   late UserHomeBloc userHomeBloc;
   late TaskHomeBloc taskHomeBloc;
   late ProjectHomeBloc projectHomeBloc;
+  late PreferenceBloc preferenceBloc;
+  PreferenceResponse? _preference;
+
+  @override
+  void initState() {
+    super.initState();
+    preferenceBloc = PreferenceBloc(PreferenceService())
+      ..add(PreferenceFetchEvent());
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: AppBarPreciousTime(),
-      ),
-      bottomNavigationBar: NavigationBar(
-        onDestinationSelected: (int index) {
-          setState(() {
-            currentPageIndex = index;
-          });
+    return BlocProvider.value(
+      value: preferenceBloc,
+      child: BlocConsumer<PreferenceBloc, PreferenceState>(
+        listener: (context, state) {
+          if (state is PreferenceSuccess) {
+            setState(() => _preference = state.preferenceResponse);
+          }
         },
-        backgroundColor: Colors.white,
-        indicatorColor: Colors.white,
-        selectedIndex: currentPageIndex,
+        builder: (context, prefState) {
+          final isDark = _preference?.theme == 'dark';
+          final bgColor = isDark
+              ? const Color(0xFF1E2939)
+              : const Color.fromARGB(255, 249, 250, 251);
+          final surfaceColor =
+              isDark ? const Color(0xFF364153) : Colors.white;
+          final textColor = isDark ? Colors.white : Colors.black;
+
+          return Scaffold(
+            appBar: AppBar(
+              backgroundColor: surfaceColor,
+              title: AppBarPreciousTime(preference: _preference),
+            ),
+            bottomNavigationBar: NavigationBar(
+              onDestinationSelected: (int index) {
+                setState(() {
+                  currentPageIndex = index;
+                });
+              },
+              backgroundColor: surfaceColor,
+              indicatorColor: isDark
+                  ? const Color(0xFF1E2939)
+                  : Colors.white,
+              selectedIndex: currentPageIndex,
         destinations: <Widget>[
           NavigationDestination(
             selectedIcon: SvgPicture.asset(
@@ -92,72 +124,73 @@ class _HomePageViewState extends State<HomePageView> {
         ],
       ),
       body: [
-        MultiBlocProvider(
-          providers: [
-            BlocProvider(
-              create: (context) =>
-                  userHomeBloc = UserHomeBloc(UserService())
-                    ..add(UserHomeFetchEvent()),
-            ),
-            BlocProvider(
-              create: (context) =>
-                  taskHomeBloc = TaskHomeBloc(TaskService())
-                    ..add(TaskHomeFetchEvent()),
-            ),
-            BlocProvider(
-              create: (context) =>
-                  projectHomeBloc = ProjectHomeBloc(ProjectService())
-                    ..add(ProjectHomeFetchEvent()),
-            ),
-          ],
-          child: Builder(
-            builder: (context) {
-              return SingleChildScrollView(
-                child: Container(
-                  padding: EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Color.fromARGB(255, 249, 250, 251),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Column(
+            MultiBlocProvider(
+              providers: [
+                BlocProvider(
+                  create: (context) =>
+                      userHomeBloc = UserHomeBloc(UserService())
+                        ..add(UserHomeFetchEvent()),
+                ),
+                BlocProvider(
+                  create: (context) =>
+                      taskHomeBloc = TaskHomeBloc(TaskService())
+                        ..add(TaskHomeFetchEvent()),
+                ),
+                BlocProvider(
+                  create: (context) =>
+                      projectHomeBloc = ProjectHomeBloc(ProjectService())
+                        ..add(ProjectHomeFetchEvent()),
+                ),
+              ],
+              child: Builder(
+                builder: (context) {
+                  return SingleChildScrollView(
+                    child: Container(
+                      padding: EdgeInsets.all(20),
+                      decoration: BoxDecoration(color: bgColor),
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          BlocBuilder(
-                            bloc: BlocProvider.of<UserHomeBloc>(context),
-                            builder: (context, state) {
-                              if (state is UserHomeLoading) {
-                                return Text(
-                                  'Hola, 👋',
-                                  style: GoogleFonts.poppins(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 30,
-                                  ),
-                                );
-                              }
-                              if (state is UserHomeSuccess) {
-                                return Text(
-                                  'Hola, ${state.user.name} 👋',
-                                  style: GoogleFonts.poppins(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 30,
-                                  ),
-                                );
-                              }
-                              return Text(
-                                'Hola, María 👋',
-                                style: GoogleFonts.poppins(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 30,
-                                ),
-                              );
-                            },
-                          ),
-                          Text(
-                            'Aquí está tu resumen de hoy',
-                            style: GoogleFonts.poppins(),
-                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              BlocBuilder(
+                                bloc: BlocProvider.of<UserHomeBloc>(context),
+                                builder: (context, state) {
+                                  if (state is UserHomeLoading) {
+                                    return Text(
+                                      'Hola, 👋',
+                                      style: GoogleFonts.poppins(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 30,
+                                        color: textColor,
+                                      ),
+                                    );
+                                  }
+                                  if (state is UserHomeSuccess) {
+                                    return Text(
+                                      'Hola, ${state.user.name} 👋',
+                                      style: GoogleFonts.poppins(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 30,
+                                        color: textColor,
+                                      ),
+                                    );
+                                  }
+                                  return Text(
+                                      'Hola, María 👋',
+                                      style: GoogleFonts.poppins(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 30,
+                                        color: textColor,
+                                      ),
+                                    );
+                                },
+                              ),
+                              Text(
+                                'Aquí está tu resumen de hoy',
+                                style: GoogleFonts.poppins(color: textColor),
+                              ),
                         ],
                       ),
                       SizedBox(height: 20),
@@ -170,6 +203,7 @@ class _HomePageViewState extends State<HomePageView> {
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
+                              color: textColor,
                             ),
                           ),
                           SizedBox(height: 20),
@@ -181,12 +215,14 @@ class _HomePageViewState extends State<HomePageView> {
                                 iconColor: Color.fromARGB(255, 43, 127, 255),
                                 label: 'Pendientes',
                                 totalTasks: 5,
+                                isDark: isDark,
                               ),
                               SummaryBoxWidget(
                                 icon: Icons.error_outline,
                                 iconColor: Color.fromARGB(255, 255, 105, 0),
                                 label: 'En progreso',
                                 totalProjects: 2,
+                                isDark: isDark,
                               ),
                             ],
                           ),
@@ -200,6 +236,7 @@ class _HomePageViewState extends State<HomePageView> {
                                 label: 'Completados',
                                 totalTasks: 5,
                                 totalProjects: 2,
+                                isDark: isDark,
                               ),
                               SummaryBoxWidget(
                                 icon: Icons.moving,
@@ -207,6 +244,7 @@ class _HomePageViewState extends State<HomePageView> {
                                 label: 'Total hoy',
                                 totalTasks: 5,
                                 totalProjects: 2,
+                                isDark: isDark,
                               ),
                             ],
                           ),
@@ -224,6 +262,7 @@ class _HomePageViewState extends State<HomePageView> {
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 18,
+                                  color: textColor,
                                 ),
                               ),
                               TextButton(
@@ -279,6 +318,7 @@ class _HomePageViewState extends State<HomePageView> {
                                                 .projects[index]
                                                 .percent
                                                 .floor(),
+                                            isDark: isDark,
                                           ),
                                           SizedBox(height: 14),
                                         ],
@@ -303,6 +343,7 @@ class _HomePageViewState extends State<HomePageView> {
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 18,
+                                  color: textColor,
                                 ),
                               ),
                               TextButton(
@@ -362,6 +403,7 @@ class _HomePageViewState extends State<HomePageView> {
                                             color: hexToColor(
                                               state.tasks[index].category.color,
                                             ),
+                                            isDark: isDark,
                                           ),
                                           SizedBox(height: 15)
                                         ],
@@ -389,13 +431,16 @@ class _HomePageViewState extends State<HomePageView> {
                   ),
                 ),
               );
-            },
-          ),
-        ),
-        ProjectListPage(),
-        TaskListPage(),
-        SettingsPage(),
-      ][currentPageIndex],
+                },
+              ),
+            ),
+            ProjectListPage(preference: _preference),
+            TaskListPage(preference: _preference),
+            SettingsPage(preference: _preference),
+          ][currentPageIndex],
+          );
+        },
+      ),
     );
   }
 

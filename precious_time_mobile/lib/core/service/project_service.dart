@@ -58,4 +58,47 @@ class ProjectService implements ProjectInterface {
       throw Exception(e.toString());
     }
   }
+  
+  @override
+  Future<ProjectResponse> getProject(int id) async {
+    try {
+      var response = await _apiClient.get('$_endpoint/$id');
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return ProjectResponse.fromJson(jsonDecode(response.body));
+      }
+      Map<String, dynamic> map = jsonDecode(response.body);
+      String detail = map['detail'];
+      throw Exception('Error al cargar el proyecto: $detail');
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+  
+  @override
+  Future<ProjectResponse> editProject(int id, CreateProjectDto dto) async {
+    try {
+      var response = await _apiClient.put('$_endpoint/$id', dto.toJson());
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return ProjectResponse.fromJson(jsonDecode(response.body));
+      }
+      throw Exception('Error al editar el proyecto');
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+  
+  @override
+  Future<ProjectResponse> cancelProject(int id) async {
+    try {
+      var response = await _apiClient.patch('$_endpoint/cancel/$id');
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return ProjectResponse.fromJson(jsonDecode(response.body));
+      }
+      Map<String, dynamic> map = jsonDecode(response.body);
+      String detail = map['detail'];
+      throw Exception('Error al cargar el proyecto: $detail');
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
 }

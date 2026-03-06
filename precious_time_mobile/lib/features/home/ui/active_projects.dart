@@ -7,18 +7,21 @@ class ActiveProjects extends StatelessWidget {
     required this.color,
     required this.label,
     required this.percent,
+    this.isDark = false,
   });
   final Color color;
   final String label;
   final int percent;
+  final bool isDark;
 
   @override
   Widget build(BuildContext context) {
+    final textColor = isDark ? Colors.white : null;
     return Container(
       width: double.infinity,
       height: 100,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? const Color(0xFF364153) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -43,6 +46,7 @@ class ActiveProjects extends StatelessWidget {
                   style: GoogleFonts.poppins(
                     fontWeight: FontWeight.w500,
                     fontSize: 17,
+                    color: textColor,
                   ),
                 ),
                 Text(
@@ -50,6 +54,7 @@ class ActiveProjects extends StatelessWidget {
                   style: GoogleFonts.poppins(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
+                    color: textColor,
                   ),
                 ),
               ],

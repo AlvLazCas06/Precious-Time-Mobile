@@ -16,7 +16,8 @@ class TaskCard extends StatefulWidget {
     required this.emoji,
     required this.category,
     required this.color,
-    required this.taskListBloc
+    required this.taskListBloc,
+    this.isDark = false,
   });
 
   final int id;
@@ -29,6 +30,7 @@ class TaskCard extends StatefulWidget {
   final String category;
   final Color color;
   final TaskListBloc taskListBloc;
+  final bool isDark;
 
   @override
   State<TaskCard> createState() => _TaskCardState();
@@ -38,11 +40,12 @@ class _TaskCardState extends State<TaskCard> {
 
   @override
   Widget build(BuildContext context) {
+    final textColor = widget.isDark ? Colors.white : null;
     return Container(
       width: 370,
       padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: widget.isDark ? const Color(0xFF364153) : Colors.white,
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
@@ -72,10 +75,10 @@ class _TaskCardState extends State<TaskCard> {
                           : Color.fromARGB(255, 100, 221, 148),
                   child: Icon(
                         widget.status == 'pendiente'
-                            ? Icons.circle
+                            ? Icons.visibility_rounded
                             : Icons.check,
                         color: Colors.white,
-                        size: 16,
+                        size: 18,
                       ),
                 ),
               ),
@@ -143,6 +146,7 @@ class _TaskCardState extends State<TaskCard> {
                     style: GoogleFonts.poppins(
                       fontWeight: FontWeight.w500,
                       fontSize: 18,
+                      color: textColor,
                     ),
                   ),
                 ),
@@ -153,7 +157,7 @@ class _TaskCardState extends State<TaskCard> {
                     widget.description,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.poppins(fontSize: 16),
+                    style: GoogleFonts.poppins(fontSize: 16, color: textColor),
                   ),
                 ),
                 SizedBox(height: 10),
@@ -202,8 +206,8 @@ class _TaskCardState extends State<TaskCard> {
                 SizedBox(height: 10),
                 Row(
                   children: [
-                    Icon(Icons.calendar_month_outlined),
-                    Text(widget.date ?? ''),
+                    Icon(Icons.calendar_month_outlined, color: textColor),
+                    Text(widget.date ?? '', style: GoogleFonts.poppins(color: textColor)),
                   ],
                 ),
               ],

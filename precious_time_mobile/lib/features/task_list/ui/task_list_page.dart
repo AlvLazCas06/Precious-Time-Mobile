@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:precious_time_mobile/core/models/preference_response.dart';
 import 'package:precious_time_mobile/core/service/task_service.dart';
 import 'package:precious_time_mobile/features/task_list/bloc/task_list_bloc.dart';
 import 'package:precious_time_mobile/features/task_list/ui/task_card.dart';
 
 class TaskListPage extends StatefulWidget {
-  const TaskListPage({super.key});
+  const TaskListPage({super.key, this.preference});
+
+  final PreferenceResponse? preference;
 
   @override
   State<TaskListPage> createState() => _TaskListPageState();
@@ -30,7 +33,11 @@ class _TaskListPageState extends State<TaskListPage> {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(color: Color.fromARGB(255, 249, 250, 251)),
+      decoration: BoxDecoration(
+        color: widget.preference?.theme == 'dark'
+            ? const Color(0xFF1E2939)
+            : const Color.fromARGB(255, 249, 250, 251),
+      ),
       child: Column(
         children: [
           Row(
@@ -41,11 +48,16 @@ class _TaskListPageState extends State<TaskListPage> {
                 style: GoogleFonts.poppins(
                   fontWeight: FontWeight.bold,
                   fontSize: 24,
+                  color: widget.preference?.theme == 'dark' ? Colors.white : null,
                 ),
               ),
               IconButton(
                 onPressed: () {},
-                icon: Icon(Icons.filter_alt_outlined, size: 30),
+                icon: Icon(
+                  Icons.filter_alt_outlined,
+                  size: 30,
+                  color: widget.preference?.theme == 'dark' ? Colors.white : null,
+                ),
               ),
             ],
           ),
@@ -75,7 +87,10 @@ class _TaskListPageState extends State<TaskListPage> {
                               SizedBox(height: 22),
                               Text(
                                 '${state.tasks.length} tareas en total',
-                                style: GoogleFonts.poppins(fontSize: 16),
+                                style: GoogleFonts.poppins(
+                                  fontSize: 16,
+                                  color: widget.preference?.theme == 'dark' ? Colors.white : null,
+                                ),
                               ),
                               SizedBox(height: 22),
                               ListView.builder(
@@ -102,6 +117,7 @@ class _TaskListPageState extends State<TaskListPage> {
                                           state.tasks[index].category.color,
                                         
                                         ),
+                                        isDark: widget.preference?.theme == 'dark',
                                       ),
                                       SizedBox(height: 20),
                                     ],

@@ -22,20 +22,20 @@ class ProjectResponse {
   });
 
   factory ProjectResponse.fromJson(Map<String, dynamic> json) {
-    return ProjectResponse(
-      id: json['id'] as int,
-      name: json['name'] as String,
-      description: json['description'] as String? ?? '',
-      startDate: json['startDate'] as String? ?? '',
-      finishDate: json['finishDate'] as String? ?? '',
-      status: json['status'] as String? ?? '',
-      progress: (json['progress'] as num).toDouble(),
-      author: json['author'] as String? ?? '',
-      tasks: (json['tasks'] as List<dynamic>)
-          .map((task) => Task.fromJson(task as Map<String, dynamic>))
-          .toList(),
-    );
-  }
+  return ProjectResponse(
+    id: json['id'] as int,
+    name: json['name'] as String? ?? '',
+    description: json['description'] as String? ?? '',
+    startDate: json['startDate'] as String? ?? '',
+    finishDate: json['finishDate'] as String? ?? '',
+    status: json['status'] as String? ?? '',
+    progress: (json['progress'] as num?)?.toDouble() ?? 0.0,
+    author: json['author'] as String? ?? '',
+    tasks: ((json['tasks'] as List<dynamic>?) ?? [])
+        .map((task) => Task.fromJson(task as Map<String, dynamic>))
+        .toList(),
+  );
+}
 
   Map<String, dynamic> toJson() => {
     'id': id,
@@ -64,13 +64,13 @@ class Task {
   });
 
   factory Task.fromJson(Map<String, dynamic> json) {
-    return Task(
-      id: json['id'] as int,
-      title: json['title'] as String,
-      categoryName: json['categoryName'] as String,
-      priority: json['priority'] as String,
-    );
-  }
+  return Task(
+    id: json['id'] as int,
+    title: json['title'] as String? ?? '',
+    categoryName: json['categoryName'] as String? ?? '',
+    priority: json['priority'] as String? ?? '',
+  );
+}
 
   Map<String, dynamic> toJson() => {
     'id': id,

@@ -11,7 +11,14 @@ final class PreferenceSuccess extends PreferenceState {
   PreferenceSuccess({
     required this.preferenceResponse
   });
-  final PreferenceResponse? preferenceResponse;
+  final PreferenceResponse preferenceResponse;
+}
+
+final class PreferenceEditSuccess extends PreferenceState {
+  PreferenceEditSuccess({
+    required this.preferenceResponse
+  });
+  final PreferenceResponse preferenceResponse;
 }
 
 final class PreferenceError extends PreferenceState {
