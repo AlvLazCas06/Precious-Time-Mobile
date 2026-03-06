@@ -5,6 +5,7 @@ class UserResponse {
   final String lastname;
   final bool premium;
   final List<String> roles;
+  final bool active;
 
   UserResponse({
     required this.username,
@@ -13,6 +14,7 @@ class UserResponse {
     required this.lastname,
     required this.premium,
     required this.roles,
+    required this.active
   });
 
   factory UserResponse.fromJson(Map<String, dynamic> json) {
@@ -23,6 +25,7 @@ class UserResponse {
       lastname: json['lastname'] as String,
       premium: json['premium'] as bool,
       roles: List<String>.from(json['roles'] as List),
+      active: json['active'] as bool
     );
   }
 
@@ -34,6 +37,7 @@ class UserResponse {
       'lastname': lastname,
       'premium': premium,
       'roles': roles,
+      'active': active
     };
   }
 }

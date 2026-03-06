@@ -40,4 +40,17 @@ class PreferenceService implements PreferenceInterface {
       throw Exception(e.toString());
     }
   }
+
+  @override
+  Future<PreferenceResponse> createPreference() async {
+    try {
+      var response = await _apiClient.post(_endpoint);
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return PreferenceResponse.fromJson(jsonDecode(response.body));
+      }
+      throw Exception();
+    } catch (e) {
+      throw Exception();
+    }
+  }
 }

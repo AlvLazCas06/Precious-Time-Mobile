@@ -8,7 +8,6 @@ import 'package:precious_time_mobile/core/service/token_manager.dart';
 import 'package:http/http.dart' as http;
 
 class UserService implements UserInterface {
-
   final String _urlBase = '/api/v1/users';
   final ApiClient _apiClient = ApiClient(TokenManager());
 
@@ -29,13 +28,17 @@ class UserService implements UserInterface {
   @override
   Future<UserResponse> register(CreateUserDto dto) async {
     try {
-      var response = await http.post(Uri.parse('http://10.0.2.2:8080/auth/register'), body: dto);
+      var response = await http.post(
+        Uri.parse('http://10.0.2.2:8080/auth/register'),
+        body: jsonEncode(dto.toJson()),
+        headers: {'Content-Type': 'application/json'},
+      );
       if (response.statusCode >= 200 && response.statusCode < 300) {
         return UserResponse.fromJson(jsonDecode(response.body));
       }
       throw Exception();
     } catch (e) {
-      throw Exception();
+      throw Exception(e.toString());
     }
   }
 }
