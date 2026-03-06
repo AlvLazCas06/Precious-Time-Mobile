@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:precious_time_mobile/core/models/create_project_dto.dart';
 import 'package:precious_time_mobile/core/service/project_service.dart';
 import 'package:precious_time_mobile/features/create_project/bloc/project_create_bloc.dart';
@@ -17,7 +16,6 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
-  DateTime? _startDate;
   DateTime? _endDate;
   late ProjectCreateBloc projectCreateBloc;
 
@@ -32,18 +30,6 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
     _nameController.dispose();
     _descriptionController.dispose();
     super.dispose();
-  }
-
-  Future<DateTime?> _pickDate(
-    BuildContext context, {
-    DateTime? firstDate,
-  }) async {
-    return showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: firstDate ?? DateTime(2000),
-      lastDate: DateTime(2100),
-    );
   }
 
   @override
@@ -175,35 +161,37 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
                 ),
                 const SizedBox(height: 10),
                 FormField<DateTime>(
-                  validator: (_) {
+                  validator: (value) {
                     if (_endDate == null) {
-                      return 'Por favor selecciona una fecha de fin';
+                      return 'Por favor selecciona una fecha';
                     }
                     return null;
                   },
-                  builder: (FormFieldState<DateTime> endState) {
+                  builder: (FormFieldState<DateTime> dateState) {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         InkWell(
                           onTap: () async {
-                            final picked = await _pickDate(
-                              context,
-                              firstDate: _startDate ?? DateTime(2000),
+                            final date = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime.now(),
+                              lastDate: DateTime(2030),
                             );
-                            if (picked != null) {
-                              setState(() => _endDate = picked);
-                              endState.didChange(picked);
+                            if (date != null) {
+                              setState(() => _endDate = date);
+                              dateState.didChange(date);
                             }
                           },
                           child: Container(
-                            padding: const EdgeInsets.all(16),
+                            padding: EdgeInsets.all(16),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               border: Border.all(
-                                color: endState.hasError
+                                color: dateState.hasError
                                     ? Colors.red
-                                    : const Color.fromARGB(255, 209, 213, 220),
+                                    : Color.fromARGB(255, 209, 213, 220),
                               ),
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -213,9 +201,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
                                 Text(
                                   _endDate == null
                                       ? 'Selecciona una fecha'
-                                      : DateFormat(
-                                          'dd/MM/yyyy',
-                                        ).format(_endDate!),
+                                      : '${_endDate!.day}/${_endDate!.month}/${_endDate!.year}',
                                   style: GoogleFonts.poppins(
                                     fontSize: 16,
                                     color: _endDate == null
@@ -223,23 +209,17 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
                                         : Colors.black87,
                                   ),
                                 ),
-                                const Icon(
-                                  Icons.calendar_today,
-                                  color: Colors.grey,
-                                ),
+                                Icon(Icons.calendar_today, color: Colors.grey),
                               ],
                             ),
                           ),
                         ),
-                        if (endState.hasError)
+                        if (dateState.hasError)
                           Padding(
-                            padding: const EdgeInsets.only(top: 8, left: 12),
+                            padding: EdgeInsets.only(top: 8, left: 12),
                             child: Text(
-                              endState.errorText!,
-                              style: const TextStyle(
-                                color: Colors.red,
-                                fontSize: 12,
-                              ),
+                              dateState.errorText!,
+                              style: TextStyle(color: Colors.red, fontSize: 12),
                             ),
                           ),
                       ],

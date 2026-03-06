@@ -27,8 +27,8 @@ class ProjectResponse {
       name: json['name'] as String,
       description: json['description'] as String? ?? '',
       startDate: json['startDate'] as String? ?? '',
-      finishDate: json['finishDate'] as String,
-      status: json['status'] as String,
+      finishDate: json['finishDate'] as String? ?? '',
+      status: json['status'] as String? ?? '',
       progress: (json['progress'] as num).toDouble(),
       author: json['author'] as String? ?? '',
       tasks: (json['tasks'] as List<dynamic>)

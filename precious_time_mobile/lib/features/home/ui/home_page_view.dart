@@ -138,7 +138,7 @@ class _HomePageViewState extends State<HomePageView> {
                               }
                               if (state is UserHomeSuccess) {
                                 return Text(
-                                  'Hola, ${state.user.fullName} 👋',
+                                  'Hola, ${state.user.name} 👋',
                                   style: GoogleFonts.poppins(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 30,

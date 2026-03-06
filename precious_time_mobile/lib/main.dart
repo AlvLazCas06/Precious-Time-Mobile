@@ -4,6 +4,7 @@ import 'package:precious_time_mobile/features/create_task/ui/create_task_page.da
 import 'package:precious_time_mobile/features/edit_task/ui/edit_task.dart';
 import 'package:precious_time_mobile/features/home/ui/home_page_view.dart';
 import 'package:precious_time_mobile/features/login/ui/login.dart';
+import 'package:precious_time_mobile/features/task_view/ui/task_view.dart';
 
 void main() {
   runApp(const MyApp());
@@ -26,6 +27,10 @@ class MyApp extends StatelessWidget {
         '/task/edit': (context) {
           final id = ModalRoute.of(context)!.settings.arguments as String;
           return EditTask(id: id);
+        },
+        '/task': (context) {
+          final id = ModalRoute.of(context)!.settings.arguments as String;
+          return TaskView(id: id);
         },
       },
     );

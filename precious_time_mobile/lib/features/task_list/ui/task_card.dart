@@ -58,50 +58,33 @@ class _TaskCardState extends State<TaskCard> {
         children: [
           Column(
             children: [
-              BlocConsumer<TaskListBloc, TaskListState>(
-                bloc: widget.taskListBloc,
-                listener: (context, state) {
-                  if (state is TaskCompleteSuccess) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Tarea completeda exitosamente')),
-                    );
-                  }
-                  if (state is TaskListError) {
-                    ScaffoldMessenger.of(
-                      context,
-                    ).showSnackBar(SnackBar(content: Text(state.message)));
-                  }
-                },
-                builder: (context, state) {
-                  return SizedBox(
-                    width: 37.5,
-                    height: 37.5,
-                    child: FloatingActionButton(
-                      onPressed: state is TaskListLoading
-                          ? null
-                          : () {
-                              widget.taskListBloc.add(TaskCompleteEvent(id: widget.id));
-                            },
-                      backgroundColor: widget.status == 'pendiente'
+              SizedBox(
+                width: 37.5,
+                height: 37.5,
+                child: FloatingActionButton(
+                  heroTag: 'view_${widget.id}',
+                  onPressed: () {
+                    String id = widget.id.toString();
+                    Navigator.pushNamed(context, '/task', arguments: id);
+                  },
+                  backgroundColor: widget.status == 'pendiente'
                           ? Color.fromARGB(255, 43, 127, 255)
                           : Color.fromARGB(255, 100, 221, 148),
-
-                      child: Icon(
+                  child: Icon(
                         widget.status == 'pendiente'
                             ? Icons.circle
                             : Icons.check,
                         color: Colors.white,
                         size: 16,
                       ),
-                    ),
-                  );
-                },
+                ),
               ),
               SizedBox(height: 10),
               SizedBox(
                 width: 37.5,
                 height: 37.5,
                 child: FloatingActionButton(
+                  heroTag: 'edit_${widget.id}',
                   onPressed: () {
                     String id = widget.id.toString();
                     Navigator.pushNamed(context, '/task/edit', arguments: id);
@@ -130,6 +113,7 @@ class _TaskCardState extends State<TaskCard> {
                     width: 37.5,
                     height: 37.5,
                     child: FloatingActionButton(
+                      heroTag: 'delete_${widget.id}',
                       onPressed: state is TaskListLoading
                           ? null
                           : () {

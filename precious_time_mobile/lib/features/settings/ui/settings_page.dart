@@ -157,7 +157,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   CircleAvatar(
                                     radius: 45,
                                     child: Text(
-                                      '${state.user?.fullName.substring(0, 1)}',
+                                      '${state.user?.name.substring(0, 1)}',
                                       style: GoogleFonts.poppins(
                                         fontSize: 40,
                                         fontWeight: FontWeight.bold,
@@ -203,7 +203,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                         ),
                                       ),
                                       Text(
-                                        '${state.user?.fullName}',
+                                        '${state.user?.name}',
                                         style: GoogleFonts.poppins(
                                           fontWeight: FontWeight.w500,
                                           fontSize: 18,
@@ -231,11 +231,16 @@ class _SettingsPageState extends State<SettingsPage> {
                                           fontSize: 14,
                                         ),
                                       ),
-                                      Text(
-                                        '${state.user?.email}',
-                                        style: GoogleFonts.poppins(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 18,
+                                      SizedBox(
+                                        width: 250,
+                                        child: Text(
+                                          '${state.user?.email}',
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.poppins(
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 18,
+                                          ),
                                         ),
                                       ),
                                     ],
@@ -491,6 +496,33 @@ class _SettingsPageState extends State<SettingsPage> {
                                       return null;
                                     },
                                   ),
+                                  SizedBox(height: 100),
+                                  Row(
+                                    children: [
+                                      Text('Notificaciones activas'),
+                                      FlutterSwitch(
+                                        value: theme,
+                                        width: 60,
+                                        activeColor: Color.fromARGB(
+                                          255,
+                                          21,
+                                          93,
+                                          252,
+                                        ),
+                                        inactiveColor: Color.fromARGB(
+                                          255,
+                                          209,
+                                          213,
+                                          220,
+                                        ),
+                                        onToggle: (val) {
+                                          setState(() {
+                                            theme = !theme;
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  ),
                                 ],
                               ),
                             ),
@@ -543,7 +575,9 @@ class _SettingsPageState extends State<SettingsPage> {
                                     ],
                                   ),
                                   FlutterSwitch(
-                                    value: state.preferenceResponse?.theme == 'LIGHT',
+                                    value:
+                                        state.preferenceResponse?.theme ==
+                                        'LIGHT',
                                     width: 60,
                                     activeColor: Color.fromARGB(
                                       255,
@@ -639,6 +673,32 @@ class _SettingsPageState extends State<SettingsPage> {
                                       }
                                       return null;
                                     },
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text('Notificaciones activas'),
+                                      FlutterSwitch(
+                                        value: theme,
+                                        width: 60,
+                                        activeColor: Color.fromARGB(
+                                          255,
+                                          21,
+                                          93,
+                                          252,
+                                        ),
+                                        inactiveColor: Color.fromARGB(
+                                          255,
+                                          209,
+                                          213,
+                                          220,
+                                        ),
+                                        onToggle: (val) {
+                                          setState(() {
+                                            theme = !theme;
+                                          });
+                                        },
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
@@ -789,6 +849,34 @@ class _SettingsPageState extends State<SettingsPage> {
                                       return null;
                                     },
                                   ),
+                                  SizedBox(height: 10),
+                                  Row(
+                                    mainAxisAlignment: .spaceBetween,
+                                    children: [
+                                      Text('Notificaciones activas', style: GoogleFonts.poppins(fontSize: 16),),
+                                      FlutterSwitch(
+                                        value: theme,
+                                        width: 60,
+                                        activeColor: Color.fromARGB(
+                                          255,
+                                          21,
+                                          93,
+                                          252,
+                                        ),
+                                        inactiveColor: Color.fromARGB(
+                                          255,
+                                          209,
+                                          213,
+                                          220,
+                                        ),
+                                        onToggle: (val) {
+                                          setState(() {
+                                            theme = !theme;
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  ),
                                 ],
                               ),
                             ),
@@ -922,6 +1010,32 @@ class _SettingsPageState extends State<SettingsPage> {
                                     }
                                     return null;
                                   },
+                                ),
+                                Row(
+                                  children: [
+                                    Text('Notificaciones activas'),
+                                    FlutterSwitch(
+                                      value: theme,
+                                      width: 60,
+                                      activeColor: Color.fromARGB(
+                                        255,
+                                        21,
+                                        93,
+                                        252,
+                                      ),
+                                      inactiveColor: Color.fromARGB(
+                                        255,
+                                        209,
+                                        213,
+                                        220,
+                                      ),
+                                      onToggle: (val) {
+                                        setState(() {
+                                          theme = !theme;
+                                        });
+                                      },
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
