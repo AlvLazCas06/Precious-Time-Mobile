@@ -16,3 +16,12 @@ final class ProjectViewCancelEvent extends ProjectViewEvent {
   });
   final int id;
 }
+
+final class ProjectViewCompleteTaskEvent extends ProjectViewEvent {
+  ProjectViewCompleteTaskEvent({
+    required this.taskId,
+    required this.projectId,
+  });
+  final int taskId;
+  final int projectId;
+}

@@ -144,8 +144,15 @@ class _HomePageViewState extends State<HomePageView> {
               ],
               child: Builder(
                 builder: (context) {
-                  return SingleChildScrollView(
-                    child: Container(
+                  return RefreshIndicator(
+                    onRefresh: () async {
+                      BlocProvider.of<UserHomeBloc>(context).add(UserHomeFetchEvent());
+                      BlocProvider.of<TaskHomeBloc>(context).add(TaskHomeFetchEvent());
+                      BlocProvider.of<ProjectHomeBloc>(context).add(ProjectHomeFetchEvent());
+                    },
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: Container(
                       padding: EdgeInsets.all(20),
                       decoration: BoxDecoration(color: bgColor),
                       child: Column(
@@ -207,46 +214,68 @@ class _HomePageViewState extends State<HomePageView> {
                             ),
                           ),
                           SizedBox(height: 20),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              SummaryBoxWidget(
-                                icon: Icons.timer_outlined,
-                                iconColor: Color.fromARGB(255, 43, 127, 255),
-                                label: 'Pendientes',
-                                totalTasks: 5,
-                                isDark: isDark,
-                              ),
-                              SummaryBoxWidget(
-                                icon: Icons.error_outline,
-                                iconColor: Color.fromARGB(255, 255, 105, 0),
-                                label: 'En progreso',
-                                totalProjects: 2,
-                                isDark: isDark,
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 20),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              SummaryBoxWidget(
-                                icon: Icons.check_circle_outline,
-                                iconColor: Color.fromARGB(255, 0, 201, 80),
-                                label: 'Completados',
-                                totalTasks: 5,
-                                totalProjects: 2,
-                                isDark: isDark,
-                              ),
-                              SummaryBoxWidget(
-                                icon: Icons.moving,
-                                iconColor: Color.fromARGB(255, 173, 70, 255),
-                                label: 'Total hoy',
-                                totalTasks: 5,
-                                totalProjects: 2,
-                                isDark: isDark,
-                              ),
-                            ],
+                          BlocBuilder<TaskHomeBloc, TaskHomeState>(
+                            bloc: BlocProvider.of<TaskHomeBloc>(context),
+                            builder: (context, taskState) {
+                              return BlocBuilder<ProjectHomeBloc, ProjectHomeState>(
+                                bloc: BlocProvider.of<ProjectHomeBloc>(context),
+                                builder: (context, projectState) {
+                                  final allTasks = taskState is TaskHomeSuccess ? taskState.tasks : [];
+                                  final allProjects = projectState is ProjectHomeSuccess ? projectState.projects : [];
+
+                                  final pendingTasks = allTasks.where((t) => t.status.toLowerCase() == 'pendiente').length;
+                                  final inProgressProjects = allProjects.where((p) => p.status.toLowerCase() == 'en progreso').length;
+                                  final completedTasks = allTasks.where((t) => t.status.toLowerCase() == 'completado').length;
+                                  final completedProjects = allProjects.where((p) => p.status.toLowerCase() == 'completado').length;
+
+                                  return Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                        children: [
+                                          SummaryBoxWidget(
+                                            icon: Icons.timer_outlined,
+                                            iconColor: Color.fromARGB(255, 43, 127, 255),
+                                            label: 'Pendientes',
+                                            totalTasks: pendingTasks,
+                                            isDark: isDark,
+                                          ),
+                                          SummaryBoxWidget(
+                                            icon: Icons.error_outline,
+                                            iconColor: Color.fromARGB(255, 255, 105, 0),
+                                            label: 'En progreso',
+                                            totalProjects: inProgressProjects,
+                                            isDark: isDark,
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 20),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                        children: [
+                                          SummaryBoxWidget(
+                                            icon: Icons.check_circle_outline,
+                                            iconColor: Color.fromARGB(255, 0, 201, 80),
+                                            label: 'Completados',
+                                            totalTasks: completedTasks,
+                                            totalProjects: completedProjects,
+                                            isDark: isDark,
+                                          ),
+                                          SummaryBoxWidget(
+                                            icon: Icons.moving,
+                                            iconColor: Color.fromARGB(255, 173, 70, 255),
+                                            label: 'Total hoy',
+                                            totalTasks: allTasks.length,
+                                            totalProjects: allProjects.length,
+                                            isDark: isDark,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
                           ),
                         ],
                       ),
@@ -314,10 +343,7 @@ class _HomePageViewState extends State<HomePageView> {
                                               246,
                                             ),
                                             label: state.projects[index].name,
-                                            percent: state
-                                                .projects[index]
-                                                .percent
-                                                .floor(),
+                                            percent: (state.projects[index].progress * 100).floor(),
                                             isDark: isDark,
                                           ),
                                           SizedBox(height: 14),
@@ -430,7 +456,8 @@ class _HomePageViewState extends State<HomePageView> {
                     ],
                   ),
                 ),
-              );
+                    ),
+                  );
                 },
               ),
             ),

@@ -11,10 +11,12 @@ final class ProjectViewSuccess extends ProjectViewState {
   ProjectViewSuccess({
     required this.project
   });
-  final ProjectResponse project;
+  final Project project;
 }
 
 final class ProjectViewCancelSuccess extends ProjectViewState {}
+
+final class ProjectViewCompleteTaskSuccess extends ProjectViewState {}
 
 final class ProjectViewError extends ProjectViewState {
   ProjectViewError({

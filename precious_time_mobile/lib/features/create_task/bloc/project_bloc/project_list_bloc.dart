@@ -8,11 +8,14 @@ part 'project_list_state.dart';
 
 class ProjectListBloc extends Bloc<ProjectListEvent, ProjectListState> {
   ProjectListBloc(ProjectService projectService) : super(ProjectListInitial()) {
-    on<ProjectListFetchAllEvent>((event, emit) async {
+    on<ProjectListFetchEvent>((event, emit) async {
       emit(ProjectListLoading());
       try {
-        var projects = await projectService.getProjects();
-        emit(ProjectListSuccess(projects: projects));
+        final all = await projectService.getProjects();
+        final inProgress = all
+            .where((p) => p.status.toLowerCase() == 'en progreso')
+            .toList();
+        emit(ProjectListSuccess(projects: inProgress));
       } catch (e) {
         emit(ProjectListError(message: e.toString()));
       }

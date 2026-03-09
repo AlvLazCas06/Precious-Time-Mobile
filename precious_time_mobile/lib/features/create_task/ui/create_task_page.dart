@@ -7,6 +7,9 @@ import 'package:precious_time_mobile/core/service/task_service.dart';
 import 'package:precious_time_mobile/features/create_task/bloc/category_bloc/category_list_bloc.dart';
 import 'package:precious_time_mobile/features/create_task/bloc/task_bloc/task_create_bloc.dart';
 import 'package:precious_time_mobile/features/create_task/ui/category_card.dart';
+import 'package:precious_time_mobile/core/service/project_service.dart';
+import 'package:precious_time_mobile/features/create_task/bloc/project_bloc/project_list_bloc.dart';
+import 'package:precious_time_mobile/features/create_task/ui/project_card.dart';
 
 class CreateTaskPage extends StatefulWidget {
   const CreateTaskPage({super.key});
@@ -24,6 +27,8 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
   final _descriptionForm = TextEditingController();
   late CategoryListBloc categoryListBloc;
   late TaskCreateBloc taskCreateBloc;
+  int? _selectedProject;
+  late ProjectListBloc projectListBloc;
 
   @override
   void initState() {
@@ -31,6 +36,8 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
     categoryListBloc = CategoryListBloc(CategoryService())
       ..add(CategoryListFetchAllEvent());
     taskCreateBloc = TaskCreateBloc(TaskService());
+    projectListBloc = ProjectListBloc(ProjectService())
+      ..add(ProjectListFetchEvent());
   }
 
   @override
@@ -329,6 +336,63 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
                     );
                   },
                 ),
+                SizedBox(height: 20),
+                Row(
+                  children: [
+                    Icon(Icons.work_outline),
+                    Text(
+                      ' Proyecto (opcional)',
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10),
+                BlocBuilder<ProjectListBloc, ProjectListState>(
+                  bloc: projectListBloc,
+                  builder: (context, projectState) {
+                    if (projectState is ProjectListLoading) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                    if (projectState is ProjectListSuccess) {
+                      if (projectState.projects.isEmpty) {
+                        return Text(
+                          'No hay proyectos en progreso disponibles',
+                          style: GoogleFonts.poppins(
+                            color: Color.fromARGB(255, 106, 114, 130),
+                          ),
+                        );
+                      }
+                      return ListView.separated(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: projectState.projects.length,
+                        separatorBuilder: (_, __) => SizedBox(height: 8),
+                        itemBuilder: (context, index) {
+                          final project = projectState.projects[index];
+                          return ProjectCard(
+                            id: project.id,
+                            name: project.name,
+                            progress: project.progress,
+                            isSelected: _selectedProject == project.id,
+                            onTap: () {
+                              setState(() {
+                                _selectedProject =
+                                    _selectedProject == project.id
+                                        ? null
+                                        : project.id;
+                              });
+                            },
+                          );
+                        },
+                      );
+                    }
+                    return SizedBox.shrink();
+                  },
+                ),
+                SizedBox(height: 20),
                 Row(
                   children: [
                     Icon(Icons.calendar_today_outlined, size: 16),
@@ -436,6 +500,7 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
                                     TaskCreateFetchEvent(
                                       createTaskDto: CreateTaskDto(
                                         categoryId: _selectedCategory!,
+                                        projectId: _selectedProject,
                                         title: _titleForm.text,
                                         description: _descriptionForm.text,
                                         priority: _selectedPriority,

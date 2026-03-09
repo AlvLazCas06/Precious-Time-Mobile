@@ -11,7 +11,7 @@ final class TaskHomeSuccess extends TaskHomeState {
   TaskHomeSuccess({
     required this.tasks
   });
-  final List<TaskSummary> tasks;
+  final List<Task> tasks;
 }
 
 final class TaskHomeError extends TaskHomeState {

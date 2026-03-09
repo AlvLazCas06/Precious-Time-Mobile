@@ -82,7 +82,7 @@ class _ProjectListPageState extends State<ProjectListPage> {
                                       id: state.projects[index].id,
                                       label: state.projects[index].name,
                                       description:
-                                          state.projects[index].description,
+                                          state.projects[index].description!,
                                       status: state.projects[index].status,
                                       percent: state.projects[index].progress,
                                       startDate:

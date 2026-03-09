@@ -13,7 +13,7 @@ final class EditProjectGetSuccess extends EditProjectState {
   EditProjectGetSuccess({
     required this.project
   });
-  final ProjectResponse project;
+  final Project project;
 }
 
 final class EditProjectError extends EditProjectState {
